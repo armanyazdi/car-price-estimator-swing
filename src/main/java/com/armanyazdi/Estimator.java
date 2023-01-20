@@ -162,7 +162,7 @@ public class Estimator {
     }
 
     // This method converts Gregorian to Jalali date.
-    public static int[] gregorianToJalali(int gy, int gm, int gd) {
+    public int[] gregorianToJalali(int gy, int gm, int gd) {
         int[] out = {(gm > 2) ? (gy + 1) : gy, 0, 0};
         {
             int[] g_d_m = {0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334};
