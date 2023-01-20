@@ -24,6 +24,7 @@ public class Estimator {
     String status;
     String replace;
 
+    // This method gets the car details from the user.
     public void userInput() {
 
         // Example: "Peugeot 207" or "renault tondar90"
@@ -109,6 +110,7 @@ public class Estimator {
         dividerLine();
     }
 
+    // This method estimates the price of the car.
     public void priceEstimator() {
 
         // Gregorian to Jalali date converter.
