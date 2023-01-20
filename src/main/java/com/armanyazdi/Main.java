@@ -23,7 +23,7 @@ public class Main {
         Scanner carModel = new Scanner(System.in);
         String model = carModel.nextLine().toLowerCase().strip().replace(" ", "-");
 
-        dividerLine(25);
+        dividerLine();
 
         // Example : "manual" or "automatic"
         System.out.println("1) Manual");
@@ -37,28 +37,28 @@ public class Main {
             case 2 -> gearbox = "automatic";
         }
 
-        dividerLine(25);
+        dividerLine();
 
         // Example: 1400
         System.out.print("Car Build Year: ");
         Scanner buildYear = new Scanner(System.in);
         String build = buildYear.nextLine();
 
-        dividerLine(25);
+        dividerLine();
 
         // Example: 10000
         System.out.print("Car Mileage (km): ");
         Scanner carMileage = new Scanner(System.in);
         String mileage = carMileage.nextLine();
 
-        dividerLine(25);
+        dividerLine();
 
         // Example : "white" or "black"
         System.out.print("Car Color: ");
         Scanner carColor = new Scanner(System.in);
         String color = carColor.nextLine().toLowerCase().strip();
 
-        dividerLine(25);
+        dividerLine();
 
         System.out.println("0) No Paint");
         System.out.println("1) One Paint");
@@ -81,7 +81,7 @@ public class Main {
             case 6 -> status = "refinement";
         }
 
-        dividerLine(25);
+        dividerLine();
 
         System.out.println("0) No Replacements");
         System.out.println("1) Fender Replaced");
@@ -98,7 +98,7 @@ public class Main {
             case 3 -> replace = ",door_replace";
         }
 
-        dividerLine(25);
+        dividerLine();
 
         // Gregorian to Jalali date converter.
         LocalDate localDate = LocalDate.now();
@@ -146,11 +146,8 @@ public class Main {
     }
 
     // This method generates divider lines.
-    public static void dividerLine(int n) {
-        for (int i = 0; i < n; i++) {
-            System.out.print("-");
-        }
-        System.out.println();
+    public static void dividerLine() {
+        System.out.println("-------------------------");
     }
 
     // This method converts Gregorian to Jalali date.
