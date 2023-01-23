@@ -11,8 +11,8 @@ public class Main {
         carPriceEstimator.mainFrame();
 
         /* Use with terminal:
-           Terminal carPriceEstimator = new Terminal();
-           carPriceEstimator.userInput();
-           carPriceEstimator.priceEstimator(); */
+        Terminal carPriceEstimator = new Terminal();
+        carPriceEstimator.userInput();
+        carPriceEstimator.priceEstimator(); */
     }
 }
