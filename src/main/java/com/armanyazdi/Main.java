@@ -5,7 +5,10 @@ import java.io.IOException;
 
 public class Main {
     public static void main(String[] args) throws IOException, FontFormatException {
+        // Use with GUI:
         Estimator carPriceEstimator = new Estimator();
+        // Use with terminal:
+        // Terminal carPriceEstimator = new Terminal();
         carPriceEstimator.mainFrame();
     }
 }
