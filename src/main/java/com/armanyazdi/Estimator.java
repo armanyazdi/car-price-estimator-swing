@@ -21,7 +21,6 @@ import java.util.ArrayList;
 
 
 public class Estimator extends JFrame implements ActionListener {
-    JFrame frame;
     String model;
     String gearbox;
     String build;
@@ -29,13 +28,14 @@ public class Estimator extends JFrame implements ActionListener {
     String color;
     String status;
     String price;
-    Font titleFont;
+    JFrame frame;
     JLabel labelModel, labelGearbox, labelBuild, labelMileage, labelColor, labelStatus;
     JTextField tfBuild, tfMileage;
     JComboBox<String> cboModel;
     JComboBox<String> cboGearbox;
     JComboBox<String> cboColor;
     JComboBox<String> cboStatus;
+    Font titleFont;
     String jalaliDate;
     String pleaseChoose = "----- انتخاب کنید -----";
 
