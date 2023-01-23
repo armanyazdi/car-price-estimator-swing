@@ -29,14 +29,13 @@ public class Estimator extends JFrame implements ActionListener {
     String color;
     String status;
     String price;
-
+    Font titleFont;
     JLabel labelModel, labelGearbox, labelBuild, labelMileage, labelColor, labelStatus;
+    JTextField tfBuild, tfMileage;
     JComboBox<String> cboModel;
     JComboBox<String> cboGearbox;
     JComboBox<String> cboColor;
     JComboBox<String> cboStatus;
-    JTextField tfBuild, tfMileage;
-    Font titleFont;
     String jalaliDate;
     String pleaseChoose = "----- انتخاب کنید -----";
 
