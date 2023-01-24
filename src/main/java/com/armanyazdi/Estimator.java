@@ -4,6 +4,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -582,8 +583,8 @@ public class Estimator extends JFrame implements ActionListener {
             case 18 -> status = "scrap";
         }
 
-        build = persianToEnglish(tfBuild.getText());
-        mileage = persianToEnglish(tfMileage.getText());
+        build = persianToEnglish(tfBuild.getText().trim());
+        mileage = persianToEnglish(tfMileage.getText().trim());
 
         // URL
         String fmtURL = "https://bama.ir/car/%s-y%s?mileage=%s&priced=1&seller=1&transmission=%s&color=%s&status=%s&sort=7".formatted(model, build, mileage, gearbox, color, status);
