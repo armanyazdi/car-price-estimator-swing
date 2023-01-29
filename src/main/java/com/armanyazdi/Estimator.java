@@ -22,23 +22,15 @@ import java.util.ArrayList;
 
 
 public class Estimator extends JFrame implements ActionListener {
-    String model;
-    String gearbox;
-    String build;
-    String mileage;
-    String color;
-    String status;
-    String price;
-    JFrame frame;
+    String model, gearbox, build, mileage, color, status, jalaliDate;
+    JFrame frame, framePrice;
     JLabel labelModel, labelGearbox, labelBuild, labelMileage, labelColor, labelStatus;
     JTextField tfBuild, tfMileage;
-    JComboBox<String> cboModel;
-    JComboBox<String> cboGearbox;
-    JComboBox<String> cboColor;
-    JComboBox<String> cboStatus;
-    Font titleFont;
-    String jalaliDate;
+    JComboBox<String> cboModel, cboGearbox, cboColor, cboStatus;
+    Font titleFont, textFont, detailFont, priceFont;
+    DecimalFormat fmt;
     String pleaseChoose = "----- انتخاب کنید -----";
+    int firstPrice, secondPrice, roundedPrice;
 
     public void mainFrame() throws IOException, FontFormatException {
 
@@ -64,7 +56,9 @@ public class Estimator extends JFrame implements ActionListener {
         File fontFile2 = new File("src/main/resources/fonts/KalamehFaNum-Regular.ttf");
         Font font2 = Font.createFont(Font.TRUETYPE_FONT, fontFile2);
         titleFont = font1.deriveFont(28f);
-        Font textFont = font2.deriveFont(18f);
+        textFont = font2.deriveFont(18f);
+        detailFont = font2.deriveFont(24f);
+        priceFont = font1.deriveFont(32f);
 
         labelModel = new JLabel("مدل خودرو", SwingConstants.RIGHT);
         labelModel.setBounds(350,35,150,40);
@@ -608,11 +602,10 @@ public class Estimator extends JFrame implements ActionListener {
                     Elements prices = document.getElementsByClass("bama-ad__price");
                     ArrayList<String> pricesList = new ArrayList<>();
                     for (Element price : prices) pricesList.add(price.text());
-                    int firstPrice = Integer.parseInt(pricesList.get(0).replace(",",""));
-                    int secondPrice = (int) (firstPrice + firstPrice * 0.02);
-                    int roundedPrice = (secondPrice + 500000) / 1000000 * 1000000;
-                    DecimalFormat fmt = new DecimalFormat("#,###");
-                    price = "%s تا %s تومان در تاریخ %s".formatted(fmt.format(firstPrice), fmt.format(roundedPrice), jalaliDate);
+                    firstPrice = Integer.parseInt(pricesList.get(0).replace(",",""));
+                    secondPrice = (int) (firstPrice + firstPrice * 0.02);
+                    roundedPrice = (secondPrice + 500000) / 1000000 * 1000000;
+                    fmt = new DecimalFormat("#,###");
 
                 } catch (IOException e0) {
                     e0.printStackTrace();
@@ -630,15 +623,109 @@ public class Estimator extends JFrame implements ActionListener {
         System.out.println("Done!");
 
         if (e.getActionCommand().equals("محاسبه قیمت")) {
-            JDialog dialog = new JDialog(frame);
-            dialog.setSize(650, 200);
-            dialog.setLocationRelativeTo(null);
-            dialog.setResizable(false);
-            dialog.setVisible(true);
-            JLabel labelPrice = new JLabel(price, SwingConstants.CENTER);
-            labelPrice.setForeground(new Color(48, 46, 73));
-            labelPrice.setFont(titleFont);
-            dialog.add(labelPrice);
+            framePrice = new JFrame("محاسبه قیمت خودرو کارکرده");
+            framePrice.setSize(550, 640);
+            framePrice.setLocationRelativeTo(null);
+            framePrice.setResizable(false);
+            JPanel panelPrice = new JPanel();
+            framePrice.add(panelPrice);
+            showPrice(panelPrice);
+            panelPrice.setLayout(null);
+            framePrice.setVisible(true);
         }
+    }
+
+    public void showPrice(JPanel panelPrice) {
+
+        JLabel labelCar = new JLabel("%s، %s، مدل %s".formatted(
+                cboModel.getSelectedItem(),
+                cboColor.getSelectedItem(),
+                build
+        ), SwingConstants.CENTER);
+        labelCar.setBounds(0,35,550,40);
+        labelCar.setForeground(new Color(48, 46, 73));
+        labelCar.setFont(detailFont);
+        panelPrice.add(labelCar);
+
+        JLabel labelDetail = new JLabel("%s کیلومتر، %s".formatted(
+                fmt.format(Integer.parseInt(mileage)),
+                cboStatus.getSelectedItem()
+        ), SwingConstants.CENTER);
+        labelDetail.setBounds(0,95,550,40);
+        labelDetail.setForeground(new Color(48, 46, 73));
+        labelDetail.setFont(detailFont);
+        panelPrice.add(labelDetail);
+
+        JLabel labelPrice = new JLabel("%s تا %s تومان".formatted(fmt.format(firstPrice), fmt.format(roundedPrice)), SwingConstants.CENTER);
+        labelPrice.setBounds(0,390,550,40);
+        labelPrice.setForeground(new Color(48, 46, 73));
+        labelPrice.setFont(priceFont);
+        panelPrice.add(labelPrice);
+
+        JLabel labelDate = new JLabel("قیمت اعلام شده در تاریخ %s معتبر است.".formatted(jalaliDate), SwingConstants.CENTER);
+        labelDate.setBounds(0,535,550,40);
+        labelDate.setForeground(new Color(255, 86, 119));
+        labelDate.setFont(detailFont);
+        panelPrice.add(labelDate);
+
+        JLabel labelDown = new JLabel("پایین", JLabel.CENTER);
+        labelDown.setBounds(50, 305, 100, 40);
+        labelDown.setOpaque(true);
+        labelDown.setForeground(Color.WHITE);
+        labelDown.setBackground(new Color(60, 160, 86));
+        labelDown.setFont(textFont);
+        panelPrice.add(labelDown);
+
+        JLabel labelFair = new JLabel("منصفانه", JLabel.CENTER);
+        labelFair.setBounds(150, 305, 250, 40);
+        labelFair.setOpaque(true);
+        labelFair.setForeground(Color.WHITE);
+        labelFair.setBackground(new Color(84, 219, 135));
+        labelFair.setFont(textFont);
+        panelPrice.add(labelFair);
+
+        JLabel labelUp = new JLabel("بالا", JLabel.CENTER);
+        labelUp.setBounds(400, 305, 100, 40);
+        labelUp.setOpaque(true);
+        labelUp.setForeground(Color.WHITE);
+        labelUp.setBackground(new Color(255, 213, 88));
+        labelUp.setFont(textFont);
+        panelPrice.add(labelUp);
+
+        JLabel labelFirstPrice = new JLabel("%s تومان".formatted(fmt.format(firstPrice)), SwingConstants.CENTER);
+        labelFirstPrice.setBounds(0,235,275,40);
+        labelFirstPrice.setForeground(new Color(48, 46, 73));
+        labelFirstPrice.setFont(textFont);
+        panelPrice.add(labelFirstPrice);
+
+        JLabel labelSecondPrice = new JLabel("%s تومان".formatted(fmt.format(roundedPrice)), SwingConstants.CENTER);
+        labelSecondPrice.setBounds(275,235,275,40);
+        labelSecondPrice.setForeground(new Color(48, 46, 73));
+        labelSecondPrice.setFont(textFont);
+        panelPrice.add(labelSecondPrice);
+
+        JLabel l1 = new JLabel("", JLabel.CENTER);
+        l1.setBounds(150, 280, 1, 25);
+        l1.setOpaque(true);
+        l1.setBackground(new Color(104, 109, 120));
+        l1.setFont(textFont);
+        panelPrice.add(l1);
+
+        JLabel l2 = new JLabel("", JLabel.CENTER);
+        l2.setBounds(399, 280, 1, 25);
+        l2.setOpaque(true);
+        l2.setBackground(new Color(104, 109, 120));
+        l2.setFont(textFont);
+        panelPrice.add(l2);
+
+        JSeparator s1 = new JSeparator();
+        s1.setOrientation(SwingConstants.HORIZONTAL);
+        s1.setBounds(0,165,550,10);
+        panelPrice.add(s1);
+
+        JSeparator s2 = new JSeparator();
+        s2.setOrientation(SwingConstants.HORIZONTAL);
+        s2.setBounds(0,495,550,10);
+        panelPrice.add(s2);
     }
 }
