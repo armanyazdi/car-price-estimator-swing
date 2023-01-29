@@ -610,8 +610,9 @@ public class Estimator extends JFrame implements ActionListener {
                     for (Element price : prices) pricesList.add(price.text());
                     int firstPrice = Integer.parseInt(pricesList.get(0).replace(",",""));
                     int secondPrice = (int) (firstPrice + firstPrice * 0.02);
+                    int roundedPrice = (secondPrice + 500000) / 1000000 * 1000000;
                     DecimalFormat fmt = new DecimalFormat("#,###");
-                    price = "%s تا %s تومان در تاریخ %s".formatted(fmt.format(firstPrice), fmt.format(secondPrice), jalaliDate);
+                    price = "%s تا %s تومان در تاریخ %s".formatted(fmt.format(firstPrice), fmt.format(roundedPrice), jalaliDate);
 
                 } catch (IOException e0) {
                     e0.printStackTrace();
