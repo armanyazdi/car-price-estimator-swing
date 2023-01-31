@@ -693,13 +693,13 @@ public class Estimator extends JFrame implements ActionListener {
         panelPrice.add(labelUp);
 
         JLabel labelFirstPrice = new JLabel("%s تومان".formatted(fmt.format(firstPrice)), SwingConstants.CENTER);
-        labelFirstPrice.setBounds(0,235,275,40);
+        labelFirstPrice.setBounds(0, 235, 275, 40);
         labelFirstPrice.setForeground(new Color(48, 46, 73));
         labelFirstPrice.setFont(textFont);
         panelPrice.add(labelFirstPrice);
 
         JLabel labelSecondPrice = new JLabel("%s تومان".formatted(fmt.format(roundedPrice)), SwingConstants.CENTER);
-        labelSecondPrice.setBounds(275,235,275,40);
+        labelSecondPrice.setBounds(275, 235, 275, 40);
         labelSecondPrice.setForeground(new Color(48, 46, 73));
         labelSecondPrice.setFont(textFont);
         panelPrice.add(labelSecondPrice);
@@ -720,12 +720,12 @@ public class Estimator extends JFrame implements ActionListener {
 
         JSeparator s1 = new JSeparator();
         s1.setOrientation(SwingConstants.HORIZONTAL);
-        s1.setBounds(0,165,550,10);
+        s1.setBounds(0, 165, 550, 10);
         panelPrice.add(s1);
 
         JSeparator s2 = new JSeparator();
         s2.setOrientation(SwingConstants.HORIZONTAL);
-        s2.setBounds(0,495,550,10);
+        s2.setBounds(0, 495, 550, 10);
         panelPrice.add(s2);
     }
 }
