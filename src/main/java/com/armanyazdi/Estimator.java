@@ -117,6 +117,8 @@ public class Estimator extends JFrame implements ActionListener {
                 "پراید 132 SL",
                 "پراید 132 SX",
                 "پراید 141 ساده",
+                "پراید 141 SE",
+                "پراید 141 SL",
                 "پراید 141 SX",
                 "پراید 151 پلاس",
                 "پراید 151 کانوپی",
@@ -389,7 +391,7 @@ public class Estimator extends JFrame implements ActionListener {
         if (cboModel.getSelectedItem() == "پراید 111 EX") model = "pride-111-ex";
         if (cboModel.getSelectedItem() == "پراید 111 LX") model = "pride-111-lx";
         if (cboModel.getSelectedItem() == "پراید 111 SE") model = "pride-111-se";
-        if (cboModel.getSelectedItem() == "پراید 111 SL") model = "pride-111-ex";
+        if (cboModel.getSelectedItem() == "پراید 111 SL") model = "pride-111-sl";
         if (cboModel.getSelectedItem() == "پراید 111 SX") model = "pride-111-sx";
         if (cboModel.getSelectedItem() == "پراید 131 EX") model = "pride-131-ex";
         if (cboModel.getSelectedItem() == "پراید 131 LE") model = "pride-131-le";
@@ -404,6 +406,8 @@ public class Estimator extends JFrame implements ActionListener {
         if (cboModel.getSelectedItem() == "پراید 132 SL") model = "pride-132-sl";
         if (cboModel.getSelectedItem() == "پراید 132 SX") model = "pride-132-sx";
         if (cboModel.getSelectedItem() == "پراید 141 ساده") model = "pride-141-basic";
+        if (cboModel.getSelectedItem() == "پراید 141 SE") model = "pride-141-se";
+        if (cboModel.getSelectedItem() == "پراید 141 SL") model = "pride-141-sl";
         if (cboModel.getSelectedItem() == "پراید 141 SX") model = "pride-141-sx";
         if (cboModel.getSelectedItem() == "پراید 151 پلاس") model = "pride-151-plus";
         if (cboModel.getSelectedItem() == "پراید 151 کانوپی") model = "pride-151-canopi";
