@@ -34,9 +34,6 @@ public class Estimator extends JFrame implements ActionListener {
     ArrayList<String> divarPricesList = new ArrayList<>();
     NumberFormat format = NumberFormat.getNumberInstance();
     long firstPrice, secondPrice, roundedFirstPrice, roundedSecondPrice;
-    long sumBama = 0;
-    long sumDivar = 0;
-    int i;
 
     public void mainFrame() throws IOException, FontFormatException {
 
@@ -402,6 +399,8 @@ public class Estimator extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        long sumBama = 0;
+        long sumDivar = 0;
 
         if (cboModel.getSelectedItem() == "پراید 111 EX") model = new String[]{"pride-111-ex", "pride/111/ex"};
         if (cboModel.getSelectedItem() == "پراید 111 LX") model = new String[]{"pride-111-lx", "pride/111"};
@@ -633,7 +632,7 @@ public class Estimator extends JFrame implements ActionListener {
 
                     for (Element price : bamaPrices) bamaPricesList.add(price.text().replace(",", ""));
 
-                    for (i = 0; i < bamaPricesList.size(); i++)
+                    for (int i = 0; i < bamaPricesList.size(); i++)
                         sumBama += Long.parseLong(bamaPricesList.get(i));
 
                 } catch (IOException e0) {
@@ -660,7 +659,7 @@ public class Estimator extends JFrame implements ActionListener {
                         }
                     }
 
-                    for (i = 0; i < divarPricesList.size(); i++)
+                    for (int i = 0; i < divarPricesList.size(); i++)
                         sumDivar += Long.parseLong(divarPricesList.get(i));
 
                 } catch (IOException e0) {
