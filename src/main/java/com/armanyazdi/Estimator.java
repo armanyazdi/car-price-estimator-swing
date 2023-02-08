@@ -15,7 +15,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -32,7 +32,7 @@ public class Estimator extends JFrame implements ActionListener {
     Font titleFont, textFont, detailFont, priceFont;
     ArrayList<String> bamaPricesList = new ArrayList<>();
     ArrayList<String> divarPricesList = new ArrayList<>();
-    DecimalFormat fmt;
+    NumberFormat format = NumberFormat.getNumberInstance();
     long firstPrice, secondPrice, roundedFirstPrice, roundedSecondPrice;
     long sumBama = 0;
     long sumDivar = 0;
@@ -680,7 +680,6 @@ public class Estimator extends JFrame implements ActionListener {
         secondPrice = (int) (firstPrice + firstPrice * 0.02);
         roundedFirstPrice = (firstPrice + 500000) / 1000000 * 1000000;
         roundedSecondPrice = (secondPrice + 500000) / 1000000 * 1000000;
-        fmt = new DecimalFormat("#,###");
 
         // Done
         System.out.println("Done!");
@@ -711,7 +710,7 @@ public class Estimator extends JFrame implements ActionListener {
         panelPrice.add(labelCar);
 
         JLabel labelDetail = new JLabel("%s کیلومتر، %s".formatted(
-                fmt.format(Integer.parseInt(mileage)),
+                format.format(Integer.parseInt(mileage)),
                 cboStatus.getSelectedItem()
         ), SwingConstants.CENTER);
         labelDetail.setBounds(0, 95, 550, 40);
@@ -719,7 +718,7 @@ public class Estimator extends JFrame implements ActionListener {
         labelDetail.setFont(detailFont);
         panelPrice.add(labelDetail);
 
-        JLabel labelPrice = new JLabel("%s تا %s تومان".formatted(fmt.format(roundedFirstPrice), fmt.format(roundedSecondPrice)), SwingConstants.CENTER);
+        JLabel labelPrice = new JLabel("%s تا %s تومان".formatted(format.format(roundedFirstPrice), format.format(roundedSecondPrice)), SwingConstants.CENTER);
         labelPrice.setBounds(0, 390, 550, 40);
         labelPrice.setForeground(new Color(48, 46, 73));
         labelPrice.setFont(priceFont);
@@ -755,13 +754,13 @@ public class Estimator extends JFrame implements ActionListener {
         labelUp.setFont(textFont);
         panelPrice.add(labelUp);
 
-        JLabel labelFirstPrice = new JLabel("%s تومان".formatted(fmt.format(roundedFirstPrice)), SwingConstants.CENTER);
+        JLabel labelFirstPrice = new JLabel("%s تومان".formatted(format.format(roundedFirstPrice)), SwingConstants.CENTER);
         labelFirstPrice.setBounds(0, 235, 275, 40);
         labelFirstPrice.setForeground(new Color(48, 46, 73));
         labelFirstPrice.setFont(textFont);
         panelPrice.add(labelFirstPrice);
 
-        JLabel labelSecondPrice = new JLabel("%s تومان".formatted(fmt.format(roundedSecondPrice)), SwingConstants.CENTER);
+        JLabel labelSecondPrice = new JLabel("%s تومان".formatted(format.format(roundedSecondPrice)), SwingConstants.CENTER);
         labelSecondPrice.setBounds(275, 235, 275, 40);
         labelSecondPrice.setForeground(new Color(48, 46, 73));
         labelSecondPrice.setFont(textFont);
