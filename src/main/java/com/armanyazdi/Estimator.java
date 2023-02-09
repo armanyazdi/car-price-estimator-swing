@@ -31,8 +31,6 @@ public class Estimator extends JFrame implements ActionListener {
     JTextField tfBuild, tfMileage;
     JComboBox<String> cboModel, cboGearbox, cboColor, cboStatus;
     Font titleFont, textFont, detailFont, priceFont;
-    ArrayList<String> bamaPricesList = new ArrayList<>();
-    ArrayList<String> divarPricesList = new ArrayList<>();
     NumberFormat format = NumberFormat.getNumberInstance();
     long averagePrice, firstPrice, secondPrice, roundedFirstPrice, roundedSecondPrice;
 
@@ -399,6 +397,8 @@ public class Estimator extends JFrame implements ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
+        ArrayList<String> bamaPricesList = new ArrayList<>();
+        ArrayList<String> divarPricesList = new ArrayList<>();
         long sumBama = 0;
         long sumDivar = 0;
 
@@ -640,9 +640,7 @@ public class Estimator extends JFrame implements ActionListener {
                     Elements bamaPrices = bama.getElementsByClass("bama-ad__price");
 
                     for (Element price : bamaPrices) bamaPricesList.add(price.text().replace(",", ""));
-
-                    for (int i = 0; i < bamaPricesList.size(); i++)
-                        sumBama += Long.parseLong(bamaPricesList.get(i));
+                    for (String price : bamaPricesList) sumBama += Long.parseLong(price);
 
                 } catch (IOException e0) {
                     e0.printStackTrace();
@@ -669,8 +667,7 @@ public class Estimator extends JFrame implements ActionListener {
                         }
                     }
 
-                    for (int i = 0; i < divarPricesList.size(); i++)
-                        sumDivar += Long.parseLong(divarPricesList.get(i));
+                    for (String price : divarPricesList) sumDivar += Long.parseLong(price);
 
                 } catch (IOException e0) {
                     e0.printStackTrace();
