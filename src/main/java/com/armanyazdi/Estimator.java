@@ -36,7 +36,6 @@ public class Estimator extends JFrame implements ActionListener {
     long firstPrice, secondPrice, roundedFirstPrice, roundedSecondPrice;
 
     public void mainFrame() throws IOException, FontFormatException {
-
         // GitHub Repository:
         System.out.println("https://github.com/armanyazdi/car-price-estimator-java");
 
@@ -99,7 +98,7 @@ public class Estimator extends JFrame implements ActionListener {
         labelStatus.setFont(titleFont);
         panel.add(labelStatus);
 
-        // Cars
+        // Cars List
         String[] modelsList = {
                 pleaseChoose,
 
@@ -239,7 +238,7 @@ public class Estimator extends JFrame implements ActionListener {
         cboModel.setFont(textFont);
         panel.add(cboModel);
 
-        // Gearboxes
+        // Gearboxes List
         String[] gearboxList = {pleaseChoose, "اتوماتیک", "دنده ای"};
 
         cboGearbox = new JComboBox<>(gearboxList);
@@ -258,7 +257,7 @@ public class Estimator extends JFrame implements ActionListener {
         tfMileage.setFont(textFont);
         panel.add(tfMileage);
 
-        // Colors
+        // Colors List
         String[] colorsList = {
                 pleaseChoose,
 
@@ -312,7 +311,7 @@ public class Estimator extends JFrame implements ActionListener {
         cboColor.setFont(textFont);
         panel.add(cboColor);
 
-        // Statuses
+        // Statuses List
         String[] statusList = {
                 pleaseChoose,
 
@@ -402,6 +401,7 @@ public class Estimator extends JFrame implements ActionListener {
         long sumBama = 0;
         long sumDivar = 0;
 
+        // Cars
         if (cboModel.getSelectedItem() == "پراید 111 EX") model = new String[]{"pride-111-ex", "pride/111/ex"};
         if (cboModel.getSelectedItem() == "پراید 111 LX") model = new String[]{"pride-111-lx", "pride/111"};
         if (cboModel.getSelectedItem() == "پراید 111 SE") model = new String[]{"pride-111-se", "pride/111/se"};
@@ -531,12 +531,7 @@ public class Estimator extends JFrame implements ActionListener {
         if (cboModel.getSelectedItem() == "کوییک دنده ای S") model = new String[]{"quick-manuals", "quick/manual/s"};
         if (cboModel.getSelectedItem() == "کوییک R پلاس اتوماتیک") model = new String[]{"quick-manualrplus-at", "quick/automatic/p-plus"};
 
-        switch (cboGearbox.getSelectedIndex()) {
-            case 0 -> gearbox = "";
-            case 1 -> gearbox = "automatic";
-            case 2 -> gearbox = "manual";
-        }
-
+        // Colors
         if (cboColor.getSelectedItem() == "سفید") color = new String[]{"white", "%D8%B3%D9%81%DB%8C%D8%AF"};
         if (cboColor.getSelectedItem() == "مشکی") color = new String[]{"black", "%D9%85%D8%B4%DA%A9%DB%8C"};
         if (cboColor.getSelectedItem() == "خاکستری") color = new String[]{"gray", "%D8%AE%D8%A7%DA%A9%D8%B3%D8%AA%D8%B1%DB%8C"};
@@ -580,6 +575,14 @@ public class Estimator extends JFrame implements ActionListener {
         if (cboColor.getSelectedItem() == "شتری") color = new String[]{"camellike", "%D8%AE%D8%A7%DA%A9%DB%8C"};
         if (cboColor.getSelectedItem() == "مارون") color = new String[]{"maroon", "%D8%A2%D9%84%D8%A8%D8%A7%D9%84%D9%88%DB%8C%DB%8C"};
 
+        // Gearboxes
+        switch (cboGearbox.getSelectedIndex()) {
+            case 0 -> gearbox = "";
+            case 1 -> gearbox = "automatic";
+            case 2 -> gearbox = "manual";
+        }
+
+        // Statuses
         switch (cboStatus.getSelectedIndex()) {
             case 0, 1 -> status = "no_paint";
             case 2 -> status = "one_paint";
@@ -620,6 +623,7 @@ public class Estimator extends JFrame implements ActionListener {
             urlDivar = new URL(linkDivar);
             HttpURLConnection connection;
 
+            // Bama
             try {
                 connection = (HttpURLConnection) urlBama.openConnection();
                 connection.setRequestProperty("accept", "application/json");
@@ -643,6 +647,7 @@ public class Estimator extends JFrame implements ActionListener {
                 e1.printStackTrace();
             }
 
+            // Divar
             try {
                 connection = (HttpURLConnection) urlDivar.openConnection();
                 connection.setRequestProperty("accept", "application/json");
@@ -674,7 +679,7 @@ public class Estimator extends JFrame implements ActionListener {
             e1.printStackTrace();
         }
 
-        // Price
+        // Price Estimator
         firstPrice = ((sumBama / bamaPricesList.size()) + (sumDivar / divarPricesList.size())) / 2;
         secondPrice = (int) (firstPrice + firstPrice * 0.02);
         roundedFirstPrice = (firstPrice + 500000) / 1000000 * 1000000;
