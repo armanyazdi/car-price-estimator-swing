@@ -28,8 +28,8 @@ public class Estimator extends JFrame implements ActionListener {
     String gearbox, build, mileage, status, jalaliDate;
     JFrame frame, framePrice;
     JLabel labelModel, labelGearbox, labelBuild, labelMileage, labelColor, labelStatus;
-    JTextField tfBuild, tfMileage;
-    JComboBox<String> cboModel, cboGearbox, cboColor, cboStatus;
+    JTextField textFieldBuild, textFieldMileage;
+    JComboBox<String> comboBoxModel, comboBoxGearbox, comboBoxColor, comboBoxStatus;
     Font titleFont, textFont, detailFont, priceFont;
     NumberFormat format = NumberFormat.getNumberInstance();
     long averagePrice, firstPrice, secondPrice, roundedFirstPrice, roundedSecondPrice;
@@ -125,6 +125,8 @@ public class Estimator extends JFrame implements ActionListener {
                 "پراید 151 پلاس",
                 "پراید 151 SE",
                 "پراید 151 SL",
+                "پراید صندوق دار",
+                "پراید هاچ بک",
                 "پژو 206 تیپ 1",
                 "پژو 206 تیپ 2",
                 "پژو 206 تیپ 3",
@@ -231,30 +233,30 @@ public class Estimator extends JFrame implements ActionListener {
                 "کوییک R پلاس اتوماتیک"
         };
 
-        cboModel = new JComboBox<>(modelsList);
-        cboModel.setBounds(50, 35, 275, 40);
-        ((JLabel) cboModel.getRenderer()).setHorizontalAlignment(JLabel.RIGHT);
-        cboModel.setFont(textFont);
-        panel.add(cboModel);
+        comboBoxModel = new JComboBox<>(modelsList);
+        comboBoxModel.setBounds(50, 35, 275, 40);
+        ((JLabel) comboBoxModel.getRenderer()).setHorizontalAlignment(JLabel.RIGHT);
+        comboBoxModel.setFont(textFont);
+        panel.add(comboBoxModel);
 
         // Gearboxes List
         String[] gearboxList = {pleaseChoose, "اتوماتیک", "دنده ای"};
 
-        cboGearbox = new JComboBox<>(gearboxList);
-        cboGearbox.setBounds(50, 110, 275, 40);
-        ((JLabel) cboGearbox.getRenderer()).setHorizontalAlignment(JLabel.RIGHT);
-        cboGearbox.setFont(textFont);
-        panel.add(cboGearbox);
+        comboBoxGearbox = new JComboBox<>(gearboxList);
+        comboBoxGearbox.setBounds(50, 110, 275, 40);
+        ((JLabel) comboBoxGearbox.getRenderer()).setHorizontalAlignment(JLabel.RIGHT);
+        comboBoxGearbox.setFont(textFont);
+        panel.add(comboBoxGearbox);
 
-        tfBuild = new JTextField(4);
-        tfBuild.setBounds(50, 185, 275, 40);
-        tfBuild.setFont(textFont);
-        panel.add(tfBuild);
+        textFieldBuild = new JTextField(4);
+        textFieldBuild.setBounds(50, 185, 275, 40);
+        textFieldBuild.setFont(textFont);
+        panel.add(textFieldBuild);
 
-        tfMileage = new JTextField();
-        tfMileage.setBounds(50, 260, 275, 40);
-        tfMileage.setFont(textFont);
-        panel.add(tfMileage);
+        textFieldMileage = new JTextField();
+        textFieldMileage.setBounds(50, 260, 275, 40);
+        textFieldMileage.setFont(textFont);
+        panel.add(textFieldMileage);
 
         // Colors List
         String[] colorsList = {
@@ -304,11 +306,11 @@ public class Estimator extends JFrame implements ActionListener {
                 "مارون"
         };
 
-        cboColor = new JComboBox<>(colorsList);
-        cboColor.setBounds(50, 335, 275, 40);
-        ((JLabel) cboColor.getRenderer()).setHorizontalAlignment(JLabel.RIGHT);
-        cboColor.setFont(textFont);
-        panel.add(cboColor);
+        comboBoxColor = new JComboBox<>(colorsList);
+        comboBoxColor.setBounds(50, 335, 275, 40);
+        ((JLabel) comboBoxColor.getRenderer()).setHorizontalAlignment(JLabel.RIGHT);
+        comboBoxColor.setFont(textFont);
+        panel.add(comboBoxColor);
 
         // Statuses List
         String[] statusList = {
@@ -334,11 +336,11 @@ public class Estimator extends JFrame implements ActionListener {
                 "اوراقی"
         };
 
-        cboStatus = new JComboBox<>(statusList);
-        cboStatus.setBounds(50, 410, 275, 40);
-        ((JLabel) cboStatus.getRenderer()).setHorizontalAlignment(JLabel.RIGHT);
-        cboStatus.setFont(textFont);
-        panel.add(cboStatus);
+        comboBoxStatus = new JComboBox<>(statusList);
+        comboBoxStatus.setBounds(50, 410, 275, 40);
+        ((JLabel) comboBoxStatus.getRenderer()).setHorizontalAlignment(JLabel.RIGHT);
+        comboBoxStatus.setFont(textFont);
+        panel.add(comboBoxStatus);
 
         JButton estimateButton = new JButton("محاسبه قیمت");
         estimateButton.setBounds(145, 495, 250, 80);
@@ -403,7 +405,7 @@ public class Estimator extends JFrame implements ActionListener {
         long sumDivar = 0;
 
         // Cars
-        switch (Objects.requireNonNull(cboModel.getSelectedItem()).toString()) {
+        switch (Objects.requireNonNull(comboBoxModel.getSelectedItem()).toString()) {
             case "پراید 111 EX" -> model = new String[]{"pride-111-ex", "pride/111/ex"};
             case "پراید 111 LX" -> model = new String[]{"pride-111-lx", "pride/111"};
             case "پراید 111 SE" -> model = new String[]{"pride-111-se", "pride/111/se"};
@@ -428,6 +430,8 @@ public class Estimator extends JFrame implements ActionListener {
             case "پراید 151 پلاس" -> model = new String[]{"pride-151-plus", "pride/pickup/plus"};
             case "پراید 151 SE" -> model = new String[]{"pride-151-se", "pride/pickup/151-se"};
             case "پراید 151 SL" -> model = new String[]{"pride-151-sl", "pride/pickup/151-sl"};
+            case "پراید صندوق دار" -> model = new String[]{"pride-sedan", "pride/sedan/petrol"};
+            case "پراید هاچ بک" -> model = new String[]{"pride-hatchback", "pride/hatchback"};
             case "پژو 206 تیپ 1" -> model = new String[]{"peugeot-206ir-type1", "peugeot/206/1"};
             case "پژو 206 تیپ 2" -> model = new String[]{"peugeot-206ir-type2", "peugeot/206/2"};
             case "پژو 206 تیپ 3" -> model = new String[]{"peugeot-206ir-type3", "peugeot/206/3"};
@@ -535,7 +539,7 @@ public class Estimator extends JFrame implements ActionListener {
         }
 
         // Colors
-        switch (Objects.requireNonNull(cboColor.getSelectedItem()).toString()) {
+        switch (Objects.requireNonNull(comboBoxColor.getSelectedItem()).toString()) {
             case "سفید" -> color = new String[]{"white", "%D8%B3%D9%81%DB%8C%D8%AF"};
             case "مشکی" -> color = new String[]{"black", "%D9%85%D8%B4%DA%A9%DB%8C"};
             case "خاکستری" -> color = new String[]{"gray", "%D8%AE%D8%A7%DA%A9%D8%B3%D8%AA%D8%B1%DB%8C"};
@@ -581,14 +585,14 @@ public class Estimator extends JFrame implements ActionListener {
         }
 
         // Gearboxes
-        switch (cboGearbox.getSelectedIndex()) {
+        switch (comboBoxGearbox.getSelectedIndex()) {
             case 0 -> gearbox = "";
             case 1 -> gearbox = "automatic";
             case 2 -> gearbox = "manual";
         }
 
         // Statuses
-        switch (cboStatus.getSelectedIndex()) {
+        switch (comboBoxStatus.getSelectedIndex()) {
             case 0, 1 -> status = "no_paint";
             case 2 -> status = "one_paint";
             case 3 -> status = "two_paint";
@@ -609,8 +613,8 @@ public class Estimator extends JFrame implements ActionListener {
             case 18 -> status = "scrap";
         }
 
-        build = persianToEnglish(tfBuild.getText().trim());
-        mileage = persianToEnglish(tfMileage.getText().trim());
+        build = persianToEnglish(textFieldBuild.getText().trim());
+        mileage = persianToEnglish(textFieldMileage.getText().trim());
 
         // Loading
         System.out.println("Estimating Price ...");
@@ -707,8 +711,8 @@ public class Estimator extends JFrame implements ActionListener {
 
     public void showPrice(JPanel panelPrice) {
         JLabel labelCar = new JLabel("%s، %s، مدل %s".formatted(
-                cboModel.getSelectedItem(),
-                cboColor.getSelectedItem(),
+                comboBoxModel.getSelectedItem(),
+                comboBoxColor.getSelectedItem(),
                 build
         ), SwingConstants.CENTER);
         labelCar.setBounds(0, 35, 550, 40);
@@ -718,7 +722,7 @@ public class Estimator extends JFrame implements ActionListener {
 
         JLabel labelDetail = new JLabel("%s کیلومتر، %s".formatted(
                 format.format(Integer.parseInt(mileage)),
-                cboStatus.getSelectedItem()
+                comboBoxStatus.getSelectedItem()
         ), SwingConstants.CENTER);
         labelDetail.setBounds(0, 95, 550, 40);
         labelDetail.setForeground(new Color(48, 46, 73));
