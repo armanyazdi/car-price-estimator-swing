@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.Objects;
 
 
-public class Estimator extends JFrame implements ActionListener {
+public class CarPriceEstimator extends JFrame implements ActionListener {
     String pleaseChoose = "----- انتخاب کنید -----";
     String[] model, color;
     String gearbox, build, mileage, status, jalaliDate;
