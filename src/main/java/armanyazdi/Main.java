@@ -7,7 +7,7 @@ public class Main {
     public static void main(String[] args) throws IOException, FontFormatException {
 
         // Use with GUI:
-        Estimator carPriceEstimator = new Estimator();
+        CarPriceEstimator carPriceEstimator = new CarPriceEstimator();
         carPriceEstimator.mainFrame();
 
         /* Use with terminal:
