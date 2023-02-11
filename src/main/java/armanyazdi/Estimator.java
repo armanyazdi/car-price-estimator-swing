@@ -1,4 +1,4 @@
-package com.armanyazdi;
+package armanyazdi;
 
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
