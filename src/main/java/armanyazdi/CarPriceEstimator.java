@@ -781,14 +781,12 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
         l1.setBounds(150, 280, 1, 25);
         l1.setOpaque(true);
         l1.setBackground(new Color(104, 109, 120));
-        l1.setFont(textFont);
         panelPrice.add(l1);
 
         JLabel l2 = new JLabel("", JLabel.CENTER);
         l2.setBounds(399, 280, 1, 25);
         l2.setOpaque(true);
         l2.setBackground(new Color(104, 109, 120));
-        l2.setFont(textFont);
         panelPrice.add(l2);
 
         JSeparator s1 = new JSeparator();
