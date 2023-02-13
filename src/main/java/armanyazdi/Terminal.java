@@ -17,13 +17,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 public class Terminal {
-    String model;
-    String gearbox;
-    String build;
-    String mileage;
-    String color;
-    String status;
-    String replace;
+    private String model, gearbox, build, mileage, color, status, replace;
 
     // This method gets the car details from the user.
     public void userInput() {
@@ -160,12 +154,12 @@ public class Terminal {
     }
 
     // This method generates divider lines.
-    public void dividerLine() {
+    private void dividerLine() {
         System.out.println("-------------------------");
     }
 
     // This method converts Gregorian date to Jalali.
-    public int[] gregorianToJalali(int gy, int gm, int gd) {
+    private int[] gregorianToJalali(int gy, int gm, int gd) {
         int[] out = {(gm > 2) ? (gy + 1) : gy, 0, 0};
         {
             int[] g_d_m = {0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334};
