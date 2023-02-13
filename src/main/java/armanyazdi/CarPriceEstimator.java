@@ -24,7 +24,7 @@ import java.util.Objects;
 
 public class CarPriceEstimator extends JFrame implements ActionListener {
     private String[] model, color;
-    private String gearbox, build, mileage, status, jalaliDate;
+    private String gearbox, production, mileage, status;
     private JTextField textFieldBuild, textFieldMileage;
     private JComboBox<String> comboBoxModel, comboBoxGearbox, comboBoxColor, comboBoxStatus;
     private Font textFont, infoFont, priceFont;
@@ -60,44 +60,10 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
         infoFont = fontKalamehRegular.deriveFont(24f);
         priceFont = fontKalamehMedium.deriveFont(32f);
 
-        JLabel labelModel = new JLabel("مدل خودرو", SwingConstants.RIGHT);
-        labelModel.setBounds(350, 35, 150, 40);
-        labelModel.setForeground(new Color(48, 46, 73));
-        labelModel.setFont(titleFont);
-        panel.add(labelModel);
-
-        JLabel labelGearbox = new JLabel("گیربکس", SwingConstants.RIGHT);
-        labelGearbox.setBounds(350, 110, 150, 40);
-        labelGearbox.setForeground(new Color(48, 46, 73));
-        labelGearbox.setFont(titleFont);
-        panel.add(labelGearbox);
-
-        JLabel labelBuild = new JLabel("سال تولید", SwingConstants.RIGHT);
-        labelBuild.setBounds(350, 185, 150, 40);
-        labelBuild.setForeground(new Color(48, 46, 73));
-        labelBuild.setFont(titleFont);
-        panel.add(labelBuild);
-
-        JLabel labelMileage = new JLabel("کارکرد (KM)", SwingConstants.RIGHT);
-        labelMileage.setBounds(350, 260, 150, 40);
-        labelMileage.setForeground(new Color(48, 46, 73));
-        labelMileage.setFont(titleFont);
-        panel.add(labelMileage);
-
-        JLabel labelColor = new JLabel("رنگ خودرو", SwingConstants.RIGHT);
-        labelColor.setBounds(350, 335, 150, 40);
-        labelColor.setForeground(new Color(48, 46, 73));
-        labelColor.setFont(titleFont);
-        panel.add(labelColor);
-
-        JLabel labelStatus = new JLabel("وضعیت بدنه", SwingConstants.RIGHT);
-        labelStatus.setBounds(350, 410, 150, 40);
-        labelStatus.setForeground(new Color(48, 46, 73));
-        labelStatus.setFont(titleFont);
-        panel.add(labelStatus);
+        // Lists
+        String pleaseChoose = "----- انتخاب کنید -----";
 
         // Cars List
-        String pleaseChoose = "----- انتخاب کنید -----";
         String[] modelsList = {
                 pleaseChoose,
 
@@ -233,30 +199,8 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
                 "کوییک R پلاس اتوماتیک"
         };
 
-        comboBoxModel = new JComboBox<>(modelsList);
-        comboBoxModel.setBounds(50, 35, 275, 40);
-        ((JLabel) comboBoxModel.getRenderer()).setHorizontalAlignment(JLabel.RIGHT);
-        comboBoxModel.setFont(textFont);
-        panel.add(comboBoxModel);
-
         // Gearboxes List
         String[] gearboxList = {pleaseChoose, "اتوماتیک", "دنده ای"};
-
-        comboBoxGearbox = new JComboBox<>(gearboxList);
-        comboBoxGearbox.setBounds(50, 110, 275, 40);
-        ((JLabel) comboBoxGearbox.getRenderer()).setHorizontalAlignment(JLabel.RIGHT);
-        comboBoxGearbox.setFont(textFont);
-        panel.add(comboBoxGearbox);
-
-        textFieldBuild = new JTextField(4);
-        textFieldBuild.setBounds(50, 185, 275, 40);
-        textFieldBuild.setFont(textFont);
-        panel.add(textFieldBuild);
-
-        textFieldMileage = new JTextField();
-        textFieldMileage.setBounds(50, 260, 275, 40);
-        textFieldMileage.setFont(textFont);
-        panel.add(textFieldMileage);
 
         // Colors List
         String[] colorsList = {
@@ -306,12 +250,6 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
                 "مارون"
         };
 
-        comboBoxColor = new JComboBox<>(colorsList);
-        comboBoxColor.setBounds(50, 335, 275, 40);
-        ((JLabel) comboBoxColor.getRenderer()).setHorizontalAlignment(JLabel.RIGHT);
-        comboBoxColor.setFont(textFont);
-        panel.add(comboBoxColor);
-
         // Statuses List
         String[] statusList = {
                 pleaseChoose,
@@ -336,26 +274,86 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
                 "اوراقی"
         };
 
+        // Labels
+        JLabel labelModel = new JLabel("مدل خودرو", SwingConstants.RIGHT);
+        labelModel.setBounds(350, 35, 150, 40);
+        labelModel.setForeground(new Color(48, 46, 73));
+        labelModel.setFont(titleFont);
+        panel.add(labelModel);
+
+        JLabel labelGearbox = new JLabel("گیربکس", SwingConstants.RIGHT);
+        labelGearbox.setBounds(350, 110, 150, 40);
+        labelGearbox.setForeground(new Color(48, 46, 73));
+        labelGearbox.setFont(titleFont);
+        panel.add(labelGearbox);
+
+        JLabel labelBuild = new JLabel("سال تولید", SwingConstants.RIGHT);
+        labelBuild.setBounds(350, 185, 150, 40);
+        labelBuild.setForeground(new Color(48, 46, 73));
+        labelBuild.setFont(titleFont);
+        panel.add(labelBuild);
+
+        JLabel labelMileage = new JLabel("کارکرد (KM)", SwingConstants.RIGHT);
+        labelMileage.setBounds(350, 260, 150, 40);
+        labelMileage.setForeground(new Color(48, 46, 73));
+        labelMileage.setFont(titleFont);
+        panel.add(labelMileage);
+
+        JLabel labelColor = new JLabel("رنگ خودرو", SwingConstants.RIGHT);
+        labelColor.setBounds(350, 335, 150, 40);
+        labelColor.setForeground(new Color(48, 46, 73));
+        labelColor.setFont(titleFont);
+        panel.add(labelColor);
+
+        JLabel labelStatus = new JLabel("وضعیت بدنه", SwingConstants.RIGHT);
+        labelStatus.setBounds(350, 410, 150, 40);
+        labelStatus.setForeground(new Color(48, 46, 73));
+        labelStatus.setFont(titleFont);
+        panel.add(labelStatus);
+
+        // Combo Boxes
+        comboBoxModel = new JComboBox<>(modelsList);
+        comboBoxModel.setBounds(50, 35, 275, 40);
+        ((JLabel) comboBoxModel.getRenderer()).setHorizontalAlignment(JLabel.RIGHT);
+        comboBoxModel.setFont(textFont);
+        panel.add(comboBoxModel);
+
+        comboBoxGearbox = new JComboBox<>(gearboxList);
+        comboBoxGearbox.setBounds(50, 110, 275, 40);
+        ((JLabel) comboBoxGearbox.getRenderer()).setHorizontalAlignment(JLabel.RIGHT);
+        comboBoxGearbox.setFont(textFont);
+        panel.add(comboBoxGearbox);
+
+        comboBoxColor = new JComboBox<>(colorsList);
+        comboBoxColor.setBounds(50, 335, 275, 40);
+        ((JLabel) comboBoxColor.getRenderer()).setHorizontalAlignment(JLabel.RIGHT);
+        comboBoxColor.setFont(textFont);
+        panel.add(comboBoxColor);
+
         comboBoxStatus = new JComboBox<>(statusList);
         comboBoxStatus.setBounds(50, 410, 275, 40);
         ((JLabel) comboBoxStatus.getRenderer()).setHorizontalAlignment(JLabel.RIGHT);
         comboBoxStatus.setFont(textFont);
         panel.add(comboBoxStatus);
 
+        // Text Fields
+        textFieldBuild = new JTextField(4);
+        textFieldBuild.setBounds(50, 185, 275, 40);
+        textFieldBuild.setFont(textFont);
+        panel.add(textFieldBuild);
+
+        textFieldMileage = new JTextField();
+        textFieldMileage.setBounds(50, 260, 275, 40);
+        textFieldMileage.setFont(textFont);
+        panel.add(textFieldMileage);
+
+        // Button
         JButton estimateButton = new JButton("محاسبه قیمت");
         estimateButton.setBounds(145, 495, 250, 80);
         estimateButton.setForeground(new Color(255, 86, 119));
         estimateButton.setFont(titleFont);
         estimateButton.addActionListener(this);
         panel.add(estimateButton);
-
-        // Gregorian to Jalali date converter.
-        LocalDate localDate = LocalDate.now();
-        int gregorianYear = Integer.parseInt(DateTimeFormatter.ofPattern("yyyy").format(localDate));
-        int gregorianMonth = Integer.parseInt(DateTimeFormatter.ofPattern("MM").format(localDate));
-        int gregorianDay = Integer.parseInt(DateTimeFormatter.ofPattern("dd").format(localDate));
-        int[] gDate = gregorianToJalali(gregorianYear, gregorianMonth, gregorianDay);
-        jalaliDate = "%s/%s/%s".formatted(gDate[0], gDate[1], gDate[2]);
     }
 
     @Override
@@ -540,6 +538,28 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
             case "مارون" -> color = new String[]{"maroon", "%D8%A2%D9%84%D8%A8%D8%A7%D9%84%D9%88%DB%8C%DB%8C"};
         }
 
+        // Statuses
+        switch (Objects.requireNonNull(comboBoxStatus.getSelectedItem()).toString()) {
+            case "بدون رنگ" -> status = "no_paint";
+            case "یک لکه رنگ" -> status = "one_paint";
+            case "دو لکه رنگ" -> status = "two_paint";
+            case "چند لکه رنگ" -> status = "multi_paint";
+            case "صافکاری بدون رنگ" -> status = "refinement";
+            case "دور رنگ" -> status = "around_paint";
+            case "گلگیر رنگ" -> status = "fender_paint";
+            case "کاپوت رنگ" -> status = "hood_paint";
+            case "یک درب رنگ" -> status = "one_door";
+            case "دو درب رنگ" -> status = "two_door";
+            case "کامل رنگ" -> status = "full_paint";
+            case "کاپوت تعویض" -> status = "hood_replace";
+            case "گلگیر تعویض" -> status = "fender_replace";
+            case "درب تعویض" -> status = "door_replace";
+            case "اتاق تعویض" -> status = "room_replace";
+            case "تصادفی" -> status = "crashed";
+            case "سوخته" -> status = "burned";
+            case "اوراقی" -> status = "scrap";
+        }
+
         // Gearboxes
         switch (comboBoxGearbox.getSelectedIndex()) {
             case 0 -> gearbox = "";
@@ -547,29 +567,7 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
             case 2 -> gearbox = "manual";
         }
 
-        // Statuses
-        switch (comboBoxStatus.getSelectedIndex()) {
-            case 0, 1 -> status = "no_paint";
-            case 2 -> status = "one_paint";
-            case 3 -> status = "two_paint";
-            case 4 -> status = "multi_paint";
-            case 5 -> status = "refinement";
-            case 6 -> status = "around_paint";
-            case 7 -> status = "fender_paint";
-            case 8 -> status = "hood_paint";
-            case 9 -> status = "one_door";
-            case 10 -> status = "two_door";
-            case 11 -> status = "full_paint";
-            case 12 -> status = "hood_replace";
-            case 13 -> status = "fender_replace";
-            case 14 -> status = "door_replace";
-            case 15 -> status = "room_replace";
-            case 16 -> status = "crashed";
-            case 17 -> status = "burned";
-            case 18 -> status = "scrap";
-        }
-
-        build = persianToEnglish(textFieldBuild.getText().trim());
+        production = persianToEnglish(textFieldBuild.getText().trim());
         mileage = persianToEnglish(textFieldMileage.getText().trim());
 
         estimatePrice();
@@ -598,9 +596,9 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
 
         // URL
         String linkBama = "https://bama.ir/car/%s-y%s?mileage=%s&priced=1&seller=1&transmission=%s&color=%s&status=%s&sort=7"
-                .formatted(model[0], build, mileage, gearbox, color[0], status);
+                .formatted(model[0], production, mileage, gearbox, color[0], status);
         String linkDivar = "https://divar.ir/s/tehran/car/%s?color=%s&production-year=%s-%s&usage=%s-%s&business-type=personal&exchange=exclude-exchanges"
-                .formatted(model[1], color[1], build, build, mileage, (int) (Integer.parseInt(mileage) * 1.5));
+                .formatted(model[1], color[1], production, production, mileage, (int) (Integer.parseInt(mileage) * 1.5));
         URL urlBama, urlDivar;
 
         // Data Scraper
@@ -675,10 +673,19 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
     }
 
     private void showPrice(JPanel panelPrice) {
+        // Gregorian to Jalali date converter.
+        LocalDate localDate = LocalDate.now();
+        int gregorianYear = Integer.parseInt(DateTimeFormatter.ofPattern("yyyy").format(localDate));
+        int gregorianMonth = Integer.parseInt(DateTimeFormatter.ofPattern("MM").format(localDate));
+        int gregorianDay = Integer.parseInt(DateTimeFormatter.ofPattern("dd").format(localDate));
+        int[] gDate = gregorianToJalali(gregorianYear, gregorianMonth, gregorianDay);
+        String jalaliDate = "%s/%s/%s".formatted(gDate[0], gDate[1], gDate[2]);
+
+        // Labels
         JLabel labelCar = new JLabel("%s، %s، مدل %s".formatted(
                 comboBoxModel.getSelectedItem(),
                 comboBoxColor.getSelectedItem(),
-                build
+                production
         ), SwingConstants.CENTER);
         labelCar.setBounds(0, 35, 550, 40);
         labelCar.setForeground(new Color(48, 46, 73));
@@ -742,6 +749,7 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
         labelSecondPrice.setFont(textFont);
         panelPrice.add(labelSecondPrice);
 
+        // Lines
         JLabel minimumLine = new JLabel("", JLabel.CENTER);
         minimumLine.setBounds(150, 280, 3, 25);
         minimumLine.setOpaque(true);
@@ -754,6 +762,7 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
         maximumLine.setBackground(new Color(104, 109, 120));
         panelPrice.add(maximumLine);
 
+        // Separators
         JSeparator firstSeparator = new JSeparator();
         firstSeparator.setOrientation(SwingConstants.HORIZONTAL);
         firstSeparator.setBounds(0, 165, 550, 10);
