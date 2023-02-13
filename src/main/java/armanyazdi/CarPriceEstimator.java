@@ -23,22 +23,19 @@ import java.util.Objects;
 
 
 public class CarPriceEstimator extends JFrame implements ActionListener {
-    String pleaseChoose = "----- انتخاب کنید -----";
-    String[] model, color;
-    String gearbox, build, mileage, status, jalaliDate;
-    JFrame frame, framePrice;
-    JLabel labelModel, labelGearbox, labelBuild, labelMileage, labelColor, labelStatus;
-    JTextField textFieldBuild, textFieldMileage;
-    JComboBox<String> comboBoxModel, comboBoxGearbox, comboBoxColor, comboBoxStatus;
-    Font titleFont, textFont, detailFont, priceFont;
-    NumberFormat format = NumberFormat.getNumberInstance();
-    long averagePrice, firstPrice, secondPrice, roundedFirstPrice, roundedSecondPrice;
+    private String[] model, color;
+    private String gearbox, build, mileage, status, jalaliDate;
+    private JTextField textFieldBuild, textFieldMileage;
+    private JComboBox<String> comboBoxModel, comboBoxGearbox, comboBoxColor, comboBoxStatus;
+    private Font textFont, detailFont, priceFont;
+    private long roundedFirstPrice, roundedSecondPrice;
+    private final NumberFormat format = NumberFormat.getNumberInstance();
 
     public void mainFrame() throws IOException, FontFormatException {
         // GitHub Repository:
         System.out.println("https://github.com/armanyazdi/car-price-estimator-java");
 
-        frame = new JFrame("محاسبه قیمت خودرو کارکرده");
+        JFrame frame = new JFrame("محاسبه قیمت خودرو کارکرده");
         frame.setSize(550, 640);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocationRelativeTo(null);
@@ -49,55 +46,56 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
         frame.setVisible(true);
     }
 
-    public void placeComponents(JPanel panel) throws IOException, FontFormatException {
+    private void placeComponents(JPanel panel) throws IOException, FontFormatException {
         panel.setLayout(null);
 
         File fontFile1 = new File("src/main/resources/fonts/KalamehFaNum-Medium.ttf");
         Font font1 = Font.createFont(Font.TRUETYPE_FONT, fontFile1);
         File fontFile2 = new File("src/main/resources/fonts/KalamehFaNum-Regular.ttf");
         Font font2 = Font.createFont(Font.TRUETYPE_FONT, fontFile2);
-        titleFont = font1.deriveFont(28f);
+        Font titleFont = font1.deriveFont(28f);
         textFont = font2.deriveFont(18f);
         detailFont = font2.deriveFont(24f);
         priceFont = font1.deriveFont(32f);
 
-        labelModel = new JLabel("مدل خودرو", SwingConstants.RIGHT);
+        JLabel labelModel = new JLabel("مدل خودرو", SwingConstants.RIGHT);
         labelModel.setBounds(350, 35, 150, 40);
         labelModel.setForeground(new Color(48, 46, 73));
         labelModel.setFont(titleFont);
         panel.add(labelModel);
 
-        labelGearbox = new JLabel("گیربکس", SwingConstants.RIGHT);
+        JLabel labelGearbox = new JLabel("گیربکس", SwingConstants.RIGHT);
         labelGearbox.setBounds(350, 110, 150, 40);
         labelGearbox.setForeground(new Color(48, 46, 73));
         labelGearbox.setFont(titleFont);
         panel.add(labelGearbox);
 
-        labelBuild = new JLabel("سال تولید", SwingConstants.RIGHT);
+        JLabel labelBuild = new JLabel("سال تولید", SwingConstants.RIGHT);
         labelBuild.setBounds(350, 185, 150, 40);
         labelBuild.setForeground(new Color(48, 46, 73));
         labelBuild.setFont(titleFont);
         panel.add(labelBuild);
 
-        labelMileage = new JLabel("کارکرد (KM)", SwingConstants.RIGHT);
+        JLabel labelMileage = new JLabel("کارکرد (KM)", SwingConstants.RIGHT);
         labelMileage.setBounds(350, 260, 150, 40);
         labelMileage.setForeground(new Color(48, 46, 73));
         labelMileage.setFont(titleFont);
         panel.add(labelMileage);
 
-        labelColor = new JLabel("رنگ خودرو", SwingConstants.RIGHT);
+        JLabel labelColor = new JLabel("رنگ خودرو", SwingConstants.RIGHT);
         labelColor.setBounds(350, 335, 150, 40);
         labelColor.setForeground(new Color(48, 46, 73));
         labelColor.setFont(titleFont);
         panel.add(labelColor);
 
-        labelStatus = new JLabel("وضعیت بدنه", SwingConstants.RIGHT);
+        JLabel labelStatus = new JLabel("وضعیت بدنه", SwingConstants.RIGHT);
         labelStatus.setBounds(350, 410, 150, 40);
         labelStatus.setForeground(new Color(48, 46, 73));
         labelStatus.setFont(titleFont);
         panel.add(labelStatus);
 
         // Cars List
+        String pleaseChoose = "----- انتخاب کنید -----";
         String[] modelsList = {
                 pleaseChoose,
 
@@ -359,7 +357,7 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
     }
 
     // This method converts Persian/Arabic numbers to English.
-    public static String persianToEnglish(String number) {
+    private static String persianToEnglish(String number) {
         char[] chars = new char[number.length()];
         for (int i = 0; i < number.length(); i++) {
             char ch = number.charAt(i);
@@ -373,7 +371,7 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
     }
 
     // This method converts Gregorian date to Jalali.
-    public int[] gregorianToJalali(int gy, int gm, int gd) {
+    private int[] gregorianToJalali(int gy, int gm, int gd) {
         int[] out = {(gm > 2) ? (gy + 1) : gy, 0, 0};
         {
             int[] g_d_m = {0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334};
@@ -687,9 +685,9 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
 
         // Price Estimator
         // averagePrice = ((sumBama / bamaPricesList.size()) + (sumDivar / divarPricesList.size())) / 2;
-        averagePrice = sumBama / bamaPricesList.size();
-        firstPrice = (int) (averagePrice - averagePrice * 0.01);
-        secondPrice = (int) (averagePrice + averagePrice * 0.01);
+        long averagePrice = sumBama / bamaPricesList.size();
+        long firstPrice = (int) (averagePrice - averagePrice * 0.01);
+        long secondPrice = (int) (averagePrice + averagePrice * 0.01);
         roundedFirstPrice = (firstPrice + 500000) / 1000000 * 1000000;
         roundedSecondPrice = (secondPrice + 500000) / 1000000 * 1000000;
 
@@ -697,7 +695,7 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
         System.out.println("Done!");
 
         if (e.getActionCommand().equals("محاسبه قیمت")) {
-            framePrice = new JFrame("محاسبه قیمت خودرو کارکرده");
+            JFrame framePrice = new JFrame("محاسبه قیمت خودرو کارکرده");
             framePrice.setSize(550, 640);
             framePrice.setLocationRelativeTo(null);
             framePrice.setResizable(false);
@@ -709,7 +707,7 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
         }
     }
 
-    public void showPrice(JPanel panelPrice) {
+    private void showPrice(JPanel panelPrice) {
         JLabel labelCar = new JLabel("%s، %s، مدل %s".formatted(
                 comboBoxModel.getSelectedItem(),
                 comboBoxColor.getSelectedItem(),
@@ -777,26 +775,26 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
         labelSecondPrice.setFont(textFont);
         panelPrice.add(labelSecondPrice);
 
-        JLabel l1 = new JLabel("", JLabel.CENTER);
-        l1.setBounds(150, 280, 3, 25);
-        l1.setOpaque(true);
-        l1.setBackground(new Color(104, 109, 120));
-        panelPrice.add(l1);
+        JLabel minimumLine = new JLabel("", JLabel.CENTER);
+        minimumLine.setBounds(150, 280, 3, 25);
+        minimumLine.setOpaque(true);
+        minimumLine.setBackground(new Color(104, 109, 120));
+        panelPrice.add(minimumLine);
 
-        JLabel l2 = new JLabel("", JLabel.CENTER);
-        l2.setBounds(397, 280, 3, 25);
-        l2.setOpaque(true);
-        l2.setBackground(new Color(104, 109, 120));
-        panelPrice.add(l2);
+        JLabel maximumLine = new JLabel("", JLabel.CENTER);
+        maximumLine.setBounds(397, 280, 3, 25);
+        maximumLine.setOpaque(true);
+        maximumLine.setBackground(new Color(104, 109, 120));
+        panelPrice.add(maximumLine);
 
-        JSeparator s1 = new JSeparator();
-        s1.setOrientation(SwingConstants.HORIZONTAL);
-        s1.setBounds(0, 165, 550, 10);
-        panelPrice.add(s1);
+        JSeparator firstSeparator = new JSeparator();
+        firstSeparator.setOrientation(SwingConstants.HORIZONTAL);
+        firstSeparator.setBounds(0, 165, 550, 10);
+        panelPrice.add(firstSeparator);
 
-        JSeparator s2 = new JSeparator();
-        s2.setOrientation(SwingConstants.HORIZONTAL);
-        s2.setBounds(0, 495, 550, 10);
-        panelPrice.add(s2);
+        JSeparator secondSeparator = new JSeparator();
+        secondSeparator.setOrientation(SwingConstants.HORIZONTAL);
+        secondSeparator.setBounds(0, 495, 550, 10);
+        panelPrice.add(secondSeparator);
     }
 }
