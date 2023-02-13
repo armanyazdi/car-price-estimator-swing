@@ -27,7 +27,7 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
     private String gearbox, build, mileage, status, jalaliDate;
     private JTextField textFieldBuild, textFieldMileage;
     private JComboBox<String> comboBoxModel, comboBoxGearbox, comboBoxColor, comboBoxStatus;
-    private Font textFont, detailFont, priceFont;
+    private Font textFont, infoFont, priceFont;
     private long roundedFirstPrice, roundedSecondPrice;
     private final NumberFormat format = NumberFormat.getNumberInstance();
 
@@ -49,14 +49,16 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
     private void placeComponents(JPanel panel) throws IOException, FontFormatException {
         panel.setLayout(null);
 
-        File fontFile1 = new File("src/main/resources/fonts/KalamehFaNum-Medium.ttf");
-        Font font1 = Font.createFont(Font.TRUETYPE_FONT, fontFile1);
-        File fontFile2 = new File("src/main/resources/fonts/KalamehFaNum-Regular.ttf");
-        Font font2 = Font.createFont(Font.TRUETYPE_FONT, fontFile2);
-        Font titleFont = font1.deriveFont(28f);
-        textFont = font2.deriveFont(18f);
-        detailFont = font2.deriveFont(24f);
-        priceFont = font1.deriveFont(32f);
+        // Fonts
+        File fileKalamehRegular = new File("src/main/resources/fonts/KalamehFaNum-Regular.ttf");
+        Font fontKalamehRegular = Font.createFont(Font.TRUETYPE_FONT, fileKalamehRegular);
+        File fileKalamehMedium = new File("src/main/resources/fonts/KalamehFaNum-Medium.ttf");
+        Font fontKalamehMedium = Font.createFont(Font.TRUETYPE_FONT, fileKalamehMedium);
+
+        Font titleFont = fontKalamehMedium.deriveFont(28f);
+        textFont = fontKalamehRegular.deriveFont(18f);
+        infoFont = fontKalamehRegular.deriveFont(24f);
+        priceFont = fontKalamehMedium.deriveFont(32f);
 
         JLabel labelModel = new JLabel("مدل خودرو", SwingConstants.RIGHT);
         labelModel.setBounds(350, 35, 150, 40);
@@ -356,52 +358,8 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
         jalaliDate = "%s/%s/%s".formatted(gDate[0], gDate[1], gDate[2]);
     }
 
-    // This method converts Persian/Arabic numbers to English.
-    private static String persianToEnglish(String number) {
-        char[] chars = new char[number.length()];
-        for (int i = 0; i < number.length(); i++) {
-            char ch = number.charAt(i);
-            if (ch >= 0x0660 && ch <= 0x0669)
-                ch -= 0x0660 - '0';
-            else if (ch >= 0x06f0 && ch <= 0x06F9)
-                ch -= 0x06f0 - '0';
-            chars[i] = ch;
-        }
-        return new String(chars);
-    }
-
-    // This method converts Gregorian date to Jalali.
-    private int[] gregorianToJalali(int gy, int gm, int gd) {
-        int[] out = {(gm > 2) ? (gy + 1) : gy, 0, 0};
-        {
-            int[] g_d_m = {0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334};
-            out[2] = 355666 + (365 * gy) + ((out[0] + 3) / 4) - ((out[0] + 99) / 100) + ((out[0] + 399) / 400) + gd + g_d_m[gm - 1];
-        }
-        out[0] = -1595 + (33 * (out[2] / 12053));
-        out[2] %= 12053;
-        out[0] += 4 * (out[2] / 1461);
-        out[2] %= 1461;
-        if (out[2] > 365) {
-            out[0] += (out[2] - 1) / 365;
-            out[2] = (out[2] - 1) % 365;
-        }
-        if (out[2] < 186) {
-            out[1] = 1 + (out[2] / 31);
-            out[2] = 1 + (out[2] % 31);
-        } else {
-            out[1] = 7 + ((out[2] - 186) / 30);
-            out[2] = 1 + ((out[2] - 186) % 30);
-        }
-        return out;
-    }
-
     @Override
     public void actionPerformed(ActionEvent e) {
-        ArrayList<String> bamaPricesList = new ArrayList<>();
-        ArrayList<String> divarPricesList = new ArrayList<>();
-        long sumBama = 0;
-        long sumDivar = 0;
-
         // Cars
         switch (Objects.requireNonNull(comboBoxModel.getSelectedItem()).toString()) {
             case "پراید 111 EX" -> model = new String[]{"pride-111-ex", "pride/111/ex"};
@@ -614,6 +572,27 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
         build = persianToEnglish(textFieldBuild.getText().trim());
         mileage = persianToEnglish(textFieldMileage.getText().trim());
 
+        estimatePrice();
+
+        if (e.getActionCommand().equals("محاسبه قیمت")) {
+            JFrame framePrice = new JFrame("محاسبه قیمت خودرو کارکرده");
+            framePrice.setSize(550, 640);
+            framePrice.setLocationRelativeTo(null);
+            framePrice.setResizable(false);
+            JPanel panelPrice = new JPanel();
+            framePrice.add(panelPrice);
+            showPrice(panelPrice);
+            panelPrice.setLayout(null);
+            framePrice.setVisible(true);
+        }
+    }
+
+    private void estimatePrice() {
+        ArrayList<String> bamaPricesList = new ArrayList<>();
+        ArrayList<String> divarPricesList = new ArrayList<>();
+        long sumBama = 0;
+        long sumDivar = 0;
+
         // Loading
         System.out.println("Estimating Price ...");
 
@@ -624,7 +603,7 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
                 .formatted(model[1], color[1], build, build, mileage, (int) (Integer.parseInt(mileage) * 1.5));
         URL urlBama, urlDivar;
 
-        // Scraper
+        // Data Scraper
         try {
             urlBama = new URL(linkBama);
             urlDivar = new URL(linkDivar);
@@ -693,18 +672,6 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
 
         // Done
         System.out.println("Done!");
-
-        if (e.getActionCommand().equals("محاسبه قیمت")) {
-            JFrame framePrice = new JFrame("محاسبه قیمت خودرو کارکرده");
-            framePrice.setSize(550, 640);
-            framePrice.setLocationRelativeTo(null);
-            framePrice.setResizable(false);
-            JPanel panelPrice = new JPanel();
-            framePrice.add(panelPrice);
-            showPrice(panelPrice);
-            panelPrice.setLayout(null);
-            framePrice.setVisible(true);
-        }
     }
 
     private void showPrice(JPanel panelPrice) {
@@ -715,7 +682,7 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
         ), SwingConstants.CENTER);
         labelCar.setBounds(0, 35, 550, 40);
         labelCar.setForeground(new Color(48, 46, 73));
-        labelCar.setFont(detailFont);
+        labelCar.setFont(infoFont);
         panelPrice.add(labelCar);
 
         JLabel labelDetail = new JLabel("%s کیلومتر، %s".formatted(
@@ -724,7 +691,7 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
         ), SwingConstants.CENTER);
         labelDetail.setBounds(0, 95, 550, 40);
         labelDetail.setForeground(new Color(48, 46, 73));
-        labelDetail.setFont(detailFont);
+        labelDetail.setFont(infoFont);
         panelPrice.add(labelDetail);
 
         JLabel labelPrice = new JLabel("%s تا %s تومان".formatted(format.format(roundedFirstPrice), format.format(roundedSecondPrice)), SwingConstants.CENTER);
@@ -736,7 +703,7 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
         JLabel labelDate = new JLabel("قیمت اعلام شده در تاریخ %s معتبر است.".formatted(jalaliDate), SwingConstants.CENTER);
         labelDate.setBounds(0, 535, 550, 40);
         labelDate.setForeground(new Color(255, 86, 119));
-        labelDate.setFont(detailFont);
+        labelDate.setFont(infoFont);
         panelPrice.add(labelDate);
 
         JLabel labelDown = new JLabel("پایین", JLabel.CENTER);
@@ -796,5 +763,44 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
         secondSeparator.setOrientation(SwingConstants.HORIZONTAL);
         secondSeparator.setBounds(0, 495, 550, 10);
         panelPrice.add(secondSeparator);
+    }
+
+    // This method converts Persian/Arabic numbers to English.
+    private static String persianToEnglish(String number) {
+        char[] chars = new char[number.length()];
+        for (int i = 0; i < number.length(); i++) {
+            char ch = number.charAt(i);
+            if (ch >= 0x0660 && ch <= 0x0669)
+                ch -= 0x0660 - '0';
+            else if (ch >= 0x06f0 && ch <= 0x06F9)
+                ch -= 0x06f0 - '0';
+            chars[i] = ch;
+        }
+        return new String(chars);
+    }
+
+    // This method converts Gregorian date to Jalali.
+    private int[] gregorianToJalali(int gy, int gm, int gd) {
+        int[] out = {(gm > 2) ? (gy + 1) : gy, 0, 0};
+        {
+            int[] g_d_m = {0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334};
+            out[2] = 355666 + (365 * gy) + ((out[0] + 3) / 4) - ((out[0] + 99) / 100) + ((out[0] + 399) / 400) + gd + g_d_m[gm - 1];
+        }
+        out[0] = -1595 + (33 * (out[2] / 12053));
+        out[2] %= 12053;
+        out[0] += 4 * (out[2] / 1461);
+        out[2] %= 1461;
+        if (out[2] > 365) {
+            out[0] += (out[2] - 1) / 365;
+            out[2] = (out[2] - 1) % 365;
+        }
+        if (out[2] < 186) {
+            out[1] = 1 + (out[2] / 31);
+            out[2] = 1 + (out[2] % 31);
+        } else {
+            out[1] = 7 + ((out[2] - 186) / 30);
+            out[2] = 1 + ((out[2] - 186) % 30);
+        }
+        return out;
     }
 }
