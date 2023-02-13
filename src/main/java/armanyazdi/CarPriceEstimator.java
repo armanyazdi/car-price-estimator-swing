@@ -9,6 +9,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,6 +27,7 @@ import java.util.Objects;
 public class CarPriceEstimator extends JFrame implements ActionListener {
     private String[] model, color;
     private String gearbox, production, mileage, status;
+    private JLabel labelBuildToLetters, labelMileageToLetters;
     private JTextField textFieldBuild, textFieldMileage;
     private JComboBox<String> comboBoxModel, comboBoxGearbox, comboBoxColor, comboBoxStatus;
     private Font textFont, infoFont, priceFont;
@@ -56,6 +59,7 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
         Font fontKalamehMedium = Font.createFont(Font.TRUETYPE_FONT, fileKalamehMedium);
 
         Font titleFont = fontKalamehMedium.deriveFont(28f);
+        Font lettersFont = fontKalamehRegular.deriveFont(16f);
         textFont = fontKalamehRegular.deriveFont(18f);
         infoFont = fontKalamehRegular.deriveFont(24f);
         priceFont = fontKalamehMedium.deriveFont(32f);
@@ -293,11 +297,25 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
         labelBuild.setFont(titleFont);
         panel.add(labelBuild);
 
-        JLabel labelMileage = new JLabel("کارکرد (KM)", SwingConstants.RIGHT);
+        labelBuildToLetters = new JLabel();
+        labelBuildToLetters.setHorizontalAlignment(SwingConstants.RIGHT);
+        labelBuildToLetters.setBounds(45, 222, 275, 40);
+        labelBuildToLetters.setForeground(new Color(91, 64, 124));
+        labelBuildToLetters.setFont(lettersFont);
+        panel.add(labelBuildToLetters);
+
+        JLabel labelMileage = new JLabel("کارکرد (km)", SwingConstants.RIGHT);
         labelMileage.setBounds(350, 260, 150, 40);
         labelMileage.setForeground(new Color(48, 46, 73));
         labelMileage.setFont(titleFont);
         panel.add(labelMileage);
+
+        labelMileageToLetters = new JLabel();
+        labelMileageToLetters.setHorizontalAlignment(SwingConstants.RIGHT);
+        labelMileageToLetters.setBounds(45, 297, 275, 40);
+        labelMileageToLetters.setForeground(new Color(91, 64, 124));
+        labelMileageToLetters.setFont(lettersFont);
+        panel.add(labelMileageToLetters);
 
         JLabel labelColor = new JLabel("رنگ خودرو", SwingConstants.RIGHT);
         labelColor.setBounds(350, 335, 150, 40);
@@ -340,11 +358,13 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
         textFieldBuild = new JTextField(4);
         textFieldBuild.setBounds(50, 185, 275, 40);
         textFieldBuild.setFont(textFont);
+        textFieldBuild.addKeyListener(new textChangedListener());
         panel.add(textFieldBuild);
 
         textFieldMileage = new JTextField();
         textFieldMileage.setBounds(50, 260, 275, 40);
         textFieldMileage.setFont(textFont);
+        textFieldMileage.addKeyListener(new textChangedListener());
         panel.add(textFieldMileage);
 
         // Button
@@ -354,6 +374,234 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
         estimateButton.setFont(titleFont);
         estimateButton.addActionListener(this);
         panel.add(estimateButton);
+    }
+
+    private void estimatePrice() {
+        ArrayList<String> bamaPricesList = new ArrayList<>();
+        ArrayList<String> divarPricesList = new ArrayList<>();
+        long sumBama = 0;
+        long sumDivar = 0;
+
+        // Loading
+        System.out.println("Estimating Price ...");
+
+        // URL
+        String linkBama = "https://bama.ir/car/%s-y%s?mileage=%s&priced=1&seller=1&transmission=%s&color=%s&status=%s&sort=7"
+                .formatted(model[0], production, mileage, gearbox, color[0], status);
+        String linkDivar = "https://divar.ir/s/tehran/car/%s?color=%s&production-year=%s-%s&usage=%s-%s&business-type=personal&exchange=exclude-exchanges"
+                .formatted(model[1], color[1], production, production, mileage, (int) (Integer.parseInt(mileage) * 1.5));
+        URL urlBama, urlDivar;
+
+        // Data Scraper
+        try {
+            urlBama = new URL(linkBama);
+            urlDivar = new URL(linkDivar);
+            HttpURLConnection connection;
+
+            // Bama
+            try {
+                connection = (HttpURLConnection) urlBama.openConnection();
+                connection.setRequestProperty("accept", "application/json");
+
+                try {
+                    InputStream responseStream = connection.getInputStream();
+
+                    Document bama = Jsoup.parse(responseStream, "UTF-8", linkBama);
+                    Elements bamaPrices = bama.getElementsByClass("bama-ad__price");
+
+                    for (Element price : bamaPrices) bamaPricesList.add(price.text().replace(",", ""));
+                    for (String price : bamaPricesList) sumBama += Long.parseLong(price);
+
+                } catch (IOException e0) {
+                    e0.printStackTrace();
+                }
+
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+
+            // Divar
+            try {
+                connection = (HttpURLConnection) urlDivar.openConnection();
+                connection.setRequestProperty("accept", "application/json");
+
+                try {
+                    InputStream responseStream = connection.getInputStream();
+
+                    Document divar = Jsoup.parse(responseStream, "UTF-8", linkDivar);
+                    Elements divarPrices = divar.getElementsByClass("kt-post-card__description");
+
+                    for (Element price : divarPrices) {
+                        if (price.toString().contains("تومان")) {
+                            divarPricesList.add(persianToEnglish(price.text().replaceAll("[, تومان]", "")));
+                        }
+                    }
+
+                    for (String price : divarPricesList) sumDivar += Long.parseLong(price);
+
+                } catch (IOException e0) {
+                    e0.printStackTrace();
+                }
+
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
+
+        } catch (MalformedURLException e1) {
+            e1.printStackTrace();
+        }
+
+        // Price Estimator
+        // averagePrice = ((sumBama / bamaPricesList.size()) + (sumDivar / divarPricesList.size())) / 2;
+        long averagePrice = sumBama / bamaPricesList.size();
+        long firstPrice = (int) (averagePrice - averagePrice * 0.01);
+        long secondPrice = (int) (averagePrice + averagePrice * 0.01);
+        roundedFirstPrice = (firstPrice + 500000) / 1000000 * 1000000;
+        roundedSecondPrice = (secondPrice + 500000) / 1000000 * 1000000;
+
+        // Done
+        System.out.println("Done!");
+    }
+
+    private void showPrice(JPanel panelPrice) {
+        // Gregorian to Jalali date converter.
+        LocalDate localDate = LocalDate.now();
+        int gregorianYear = Integer.parseInt(DateTimeFormatter.ofPattern("yyyy").format(localDate));
+        int gregorianMonth = Integer.parseInt(DateTimeFormatter.ofPattern("MM").format(localDate));
+        int gregorianDay = Integer.parseInt(DateTimeFormatter.ofPattern("dd").format(localDate));
+        int[] gDate = gregorianToJalali(gregorianYear, gregorianMonth, gregorianDay);
+        String jalaliDate = "%s/%s/%s".formatted(gDate[0], gDate[1], gDate[2]);
+
+        // Labels
+        JLabel labelCar = new JLabel("%s، %s، مدل %s".formatted(
+                comboBoxModel.getSelectedItem(),
+                comboBoxColor.getSelectedItem(),
+                production
+        ), SwingConstants.CENTER);
+        labelCar.setBounds(0, 35, 550, 40);
+        labelCar.setForeground(new Color(48, 46, 73));
+        labelCar.setFont(infoFont);
+        panelPrice.add(labelCar);
+
+        JLabel labelDetail = new JLabel("%s کیلومتر، %s".formatted(
+                format.format(Integer.parseInt(mileage)),
+                comboBoxStatus.getSelectedItem()
+        ), SwingConstants.CENTER);
+        labelDetail.setBounds(0, 95, 550, 40);
+        labelDetail.setForeground(new Color(48, 46, 73));
+        labelDetail.setFont(infoFont);
+        panelPrice.add(labelDetail);
+
+        JLabel labelPrice = new JLabel("%s تا %s تومان".formatted(format.format(roundedFirstPrice), format.format(roundedSecondPrice)), SwingConstants.CENTER);
+        labelPrice.setBounds(0, 390, 550, 40);
+        labelPrice.setForeground(new Color(48, 46, 73));
+        labelPrice.setFont(priceFont);
+        panelPrice.add(labelPrice);
+
+        JLabel labelDate = new JLabel("قیمت اعلام شده در تاریخ %s معتبر است.".formatted(jalaliDate), SwingConstants.CENTER);
+        labelDate.setBounds(0, 535, 550, 40);
+        labelDate.setForeground(new Color(255, 86, 119));
+        labelDate.setFont(infoFont);
+        panelPrice.add(labelDate);
+
+        JLabel labelDown = new JLabel("پایین", JLabel.CENTER);
+        labelDown.setBounds(50, 305, 100, 40);
+        labelDown.setOpaque(true);
+        labelDown.setForeground(Color.WHITE);
+        labelDown.setBackground(new Color(60, 160, 86));
+        labelDown.setFont(textFont);
+        panelPrice.add(labelDown);
+
+        JLabel labelFair = new JLabel("منصفانه", JLabel.CENTER);
+        labelFair.setBounds(150, 305, 250, 40);
+        labelFair.setOpaque(true);
+        labelFair.setForeground(Color.WHITE);
+        labelFair.setBackground(new Color(84, 219, 135));
+        labelFair.setFont(textFont);
+        panelPrice.add(labelFair);
+
+        JLabel labelUp = new JLabel("بالا", JLabel.CENTER);
+        labelUp.setBounds(400, 305, 100, 40);
+        labelUp.setOpaque(true);
+        labelUp.setForeground(Color.WHITE);
+        labelUp.setBackground(new Color(255, 213, 88));
+        labelUp.setFont(textFont);
+        panelPrice.add(labelUp);
+
+        JLabel labelFirstPrice = new JLabel("%s تومان".formatted(format.format(roundedFirstPrice)), SwingConstants.CENTER);
+        labelFirstPrice.setBounds(0, 235, 275, 40);
+        labelFirstPrice.setForeground(new Color(48, 46, 73));
+        labelFirstPrice.setFont(textFont);
+        panelPrice.add(labelFirstPrice);
+
+        JLabel labelSecondPrice = new JLabel("%s تومان".formatted(format.format(roundedSecondPrice)), SwingConstants.CENTER);
+        labelSecondPrice.setBounds(275, 235, 275, 40);
+        labelSecondPrice.setForeground(new Color(48, 46, 73));
+        labelSecondPrice.setFont(textFont);
+        panelPrice.add(labelSecondPrice);
+
+        // Lines
+        JLabel minimumLine = new JLabel("", JLabel.CENTER);
+        minimumLine.setBounds(150, 280, 3, 25);
+        minimumLine.setOpaque(true);
+        minimumLine.setBackground(new Color(104, 109, 120));
+        panelPrice.add(minimumLine);
+
+        JLabel maximumLine = new JLabel("", JLabel.CENTER);
+        maximumLine.setBounds(397, 280, 3, 25);
+        maximumLine.setOpaque(true);
+        maximumLine.setBackground(new Color(104, 109, 120));
+        panelPrice.add(maximumLine);
+
+        // Separators
+        JSeparator firstSeparator = new JSeparator();
+        firstSeparator.setOrientation(SwingConstants.HORIZONTAL);
+        firstSeparator.setBounds(0, 165, 550, 10);
+        panelPrice.add(firstSeparator);
+
+        JSeparator secondSeparator = new JSeparator();
+        secondSeparator.setOrientation(SwingConstants.HORIZONTAL);
+        secondSeparator.setBounds(0, 495, 550, 10);
+        panelPrice.add(secondSeparator);
+    }
+
+    // This method converts Persian/Arabic numbers to English.
+    private static String persianToEnglish(String number) {
+        char[] chars = new char[number.length()];
+        for (int i = 0; i < number.length(); i++) {
+            char ch = number.charAt(i);
+            if (ch >= 0x0660 && ch <= 0x0669)
+                ch -= 0x0660 - '0';
+            else if (ch >= 0x06f0 && ch <= 0x06F9)
+                ch -= 0x06f0 - '0';
+            chars[i] = ch;
+        }
+        return new String(chars);
+    }
+
+    // This method converts Gregorian date to Jalali.
+    private int[] gregorianToJalali(int gy, int gm, int gd) {
+        int[] out = {(gm > 2) ? (gy + 1) : gy, 0, 0};
+        {
+            int[] g_d_m = {0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334};
+            out[2] = 355666 + (365 * gy) + ((out[0] + 3) / 4) - ((out[0] + 99) / 100) + ((out[0] + 399) / 400) + gd + g_d_m[gm - 1];
+        }
+        out[0] = -1595 + (33 * (out[2] / 12053));
+        out[2] %= 12053;
+        out[0] += 4 * (out[2] / 1461);
+        out[2] %= 1461;
+        if (out[2] > 365) {
+            out[0] += (out[2] - 1) / 365;
+            out[2] = (out[2] - 1) % 365;
+        }
+        if (out[2] < 186) {
+            out[1] = 1 + (out[2] / 31);
+            out[2] = 1 + (out[2] % 31);
+        } else {
+            out[1] = 7 + ((out[2] - 186) / 30);
+            out[2] = 1 + ((out[2] - 186) % 30);
+        }
+        return out;
     }
 
     @Override
@@ -585,231 +833,21 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
         }
     }
 
-    private void estimatePrice() {
-        ArrayList<String> bamaPricesList = new ArrayList<>();
-        ArrayList<String> divarPricesList = new ArrayList<>();
-        long sumBama = 0;
-        long sumDivar = 0;
+    private class textChangedListener implements KeyListener {
+        public void keyPressed(KeyEvent e){}
+        public void keyReleased(KeyEvent e) {
 
-        // Loading
-        System.out.println("Estimating Price ...");
-
-        // URL
-        String linkBama = "https://bama.ir/car/%s-y%s?mileage=%s&priced=1&seller=1&transmission=%s&color=%s&status=%s&sort=7"
-                .formatted(model[0], production, mileage, gearbox, color[0], status);
-        String linkDivar = "https://divar.ir/s/tehran/car/%s?color=%s&production-year=%s-%s&usage=%s-%s&business-type=personal&exchange=exclude-exchanges"
-                .formatted(model[1], color[1], production, production, mileage, (int) (Integer.parseInt(mileage) * 1.5));
-        URL urlBama, urlDivar;
-
-        // Data Scraper
-        try {
-            urlBama = new URL(linkBama);
-            urlDivar = new URL(linkDivar);
-            HttpURLConnection connection;
-
-            // Bama
-            try {
-                connection = (HttpURLConnection) urlBama.openConnection();
-                connection.setRequestProperty("accept", "application/json");
-
-                try {
-                    InputStream responseStream = connection.getInputStream();
-
-                    Document bama = Jsoup.parse(responseStream, "UTF-8", linkBama);
-                    Elements bamaPrices = bama.getElementsByClass("bama-ad__price");
-
-                    for (Element price : bamaPrices) bamaPricesList.add(price.text().replace(",", ""));
-                    for (String price : bamaPricesList) sumBama += Long.parseLong(price);
-
-                } catch (IOException e0) {
-                    e0.printStackTrace();
-                }
-
-            } catch (IOException e1) {
-                e1.printStackTrace();
+            if (!Objects.equals(textFieldBuild.getText(), "")) {
+                String textProduction = NumberUtils.numberToWords(Integer.parseInt(textFieldBuild.getText()));
+                if (textProduction.contains("یک هزار و")) textProduction = textProduction.replace("یک هزار و", "هزار و");
+                labelBuildToLetters.setText(textProduction);
             }
 
-            // Divar
-            try {
-                connection = (HttpURLConnection) urlDivar.openConnection();
-                connection.setRequestProperty("accept", "application/json");
-
-                try {
-                    InputStream responseStream = connection.getInputStream();
-
-                    Document divar = Jsoup.parse(responseStream, "UTF-8", linkDivar);
-                    Elements divarPrices = divar.getElementsByClass("kt-post-card__description");
-
-                    for (Element price : divarPrices) {
-                        if (price.toString().contains("تومان")) {
-                            divarPricesList.add(persianToEnglish(price.text().replaceAll("[, تومان]", "")));
-                        }
-                    }
-
-                    for (String price : divarPricesList) sumDivar += Long.parseLong(price);
-
-                } catch (IOException e0) {
-                    e0.printStackTrace();
-                }
-
-            } catch (IOException e1) {
-                e1.printStackTrace();
+            if (!Objects.equals(textFieldMileage.getText(), "")) {
+                String textMileage = NumberUtils.numberToWords(Integer.parseInt(textFieldMileage.getText()));
+                labelMileageToLetters.setText("%s کیلومتر".formatted(textMileage));
             }
-
-        } catch (MalformedURLException e1) {
-            e1.printStackTrace();
         }
-
-        // Price Estimator
-        // averagePrice = ((sumBama / bamaPricesList.size()) + (sumDivar / divarPricesList.size())) / 2;
-        long averagePrice = sumBama / bamaPricesList.size();
-        long firstPrice = (int) (averagePrice - averagePrice * 0.01);
-        long secondPrice = (int) (averagePrice + averagePrice * 0.01);
-        roundedFirstPrice = (firstPrice + 500000) / 1000000 * 1000000;
-        roundedSecondPrice = (secondPrice + 500000) / 1000000 * 1000000;
-
-        // Done
-        System.out.println("Done!");
-    }
-
-    private void showPrice(JPanel panelPrice) {
-        // Gregorian to Jalali date converter.
-        LocalDate localDate = LocalDate.now();
-        int gregorianYear = Integer.parseInt(DateTimeFormatter.ofPattern("yyyy").format(localDate));
-        int gregorianMonth = Integer.parseInt(DateTimeFormatter.ofPattern("MM").format(localDate));
-        int gregorianDay = Integer.parseInt(DateTimeFormatter.ofPattern("dd").format(localDate));
-        int[] gDate = gregorianToJalali(gregorianYear, gregorianMonth, gregorianDay);
-        String jalaliDate = "%s/%s/%s".formatted(gDate[0], gDate[1], gDate[2]);
-
-        // Labels
-        JLabel labelCar = new JLabel("%s، %s، مدل %s".formatted(
-                comboBoxModel.getSelectedItem(),
-                comboBoxColor.getSelectedItem(),
-                production
-        ), SwingConstants.CENTER);
-        labelCar.setBounds(0, 35, 550, 40);
-        labelCar.setForeground(new Color(48, 46, 73));
-        labelCar.setFont(infoFont);
-        panelPrice.add(labelCar);
-
-        JLabel labelDetail = new JLabel("%s کیلومتر، %s".formatted(
-                format.format(Integer.parseInt(mileage)),
-                comboBoxStatus.getSelectedItem()
-        ), SwingConstants.CENTER);
-        labelDetail.setBounds(0, 95, 550, 40);
-        labelDetail.setForeground(new Color(48, 46, 73));
-        labelDetail.setFont(infoFont);
-        panelPrice.add(labelDetail);
-
-        JLabel labelPrice = new JLabel("%s تا %s تومان".formatted(format.format(roundedFirstPrice), format.format(roundedSecondPrice)), SwingConstants.CENTER);
-        labelPrice.setBounds(0, 390, 550, 40);
-        labelPrice.setForeground(new Color(48, 46, 73));
-        labelPrice.setFont(priceFont);
-        panelPrice.add(labelPrice);
-
-        JLabel labelDate = new JLabel("قیمت اعلام شده در تاریخ %s معتبر است.".formatted(jalaliDate), SwingConstants.CENTER);
-        labelDate.setBounds(0, 535, 550, 40);
-        labelDate.setForeground(new Color(255, 86, 119));
-        labelDate.setFont(infoFont);
-        panelPrice.add(labelDate);
-
-        JLabel labelDown = new JLabel("پایین", JLabel.CENTER);
-        labelDown.setBounds(50, 305, 100, 40);
-        labelDown.setOpaque(true);
-        labelDown.setForeground(Color.WHITE);
-        labelDown.setBackground(new Color(60, 160, 86));
-        labelDown.setFont(textFont);
-        panelPrice.add(labelDown);
-
-        JLabel labelFair = new JLabel("منصفانه", JLabel.CENTER);
-        labelFair.setBounds(150, 305, 250, 40);
-        labelFair.setOpaque(true);
-        labelFair.setForeground(Color.WHITE);
-        labelFair.setBackground(new Color(84, 219, 135));
-        labelFair.setFont(textFont);
-        panelPrice.add(labelFair);
-
-        JLabel labelUp = new JLabel("بالا", JLabel.CENTER);
-        labelUp.setBounds(400, 305, 100, 40);
-        labelUp.setOpaque(true);
-        labelUp.setForeground(Color.WHITE);
-        labelUp.setBackground(new Color(255, 213, 88));
-        labelUp.setFont(textFont);
-        panelPrice.add(labelUp);
-
-        JLabel labelFirstPrice = new JLabel("%s تومان".formatted(format.format(roundedFirstPrice)), SwingConstants.CENTER);
-        labelFirstPrice.setBounds(0, 235, 275, 40);
-        labelFirstPrice.setForeground(new Color(48, 46, 73));
-        labelFirstPrice.setFont(textFont);
-        panelPrice.add(labelFirstPrice);
-
-        JLabel labelSecondPrice = new JLabel("%s تومان".formatted(format.format(roundedSecondPrice)), SwingConstants.CENTER);
-        labelSecondPrice.setBounds(275, 235, 275, 40);
-        labelSecondPrice.setForeground(new Color(48, 46, 73));
-        labelSecondPrice.setFont(textFont);
-        panelPrice.add(labelSecondPrice);
-
-        // Lines
-        JLabel minimumLine = new JLabel("", JLabel.CENTER);
-        minimumLine.setBounds(150, 280, 3, 25);
-        minimumLine.setOpaque(true);
-        minimumLine.setBackground(new Color(104, 109, 120));
-        panelPrice.add(minimumLine);
-
-        JLabel maximumLine = new JLabel("", JLabel.CENTER);
-        maximumLine.setBounds(397, 280, 3, 25);
-        maximumLine.setOpaque(true);
-        maximumLine.setBackground(new Color(104, 109, 120));
-        panelPrice.add(maximumLine);
-
-        // Separators
-        JSeparator firstSeparator = new JSeparator();
-        firstSeparator.setOrientation(SwingConstants.HORIZONTAL);
-        firstSeparator.setBounds(0, 165, 550, 10);
-        panelPrice.add(firstSeparator);
-
-        JSeparator secondSeparator = new JSeparator();
-        secondSeparator.setOrientation(SwingConstants.HORIZONTAL);
-        secondSeparator.setBounds(0, 495, 550, 10);
-        panelPrice.add(secondSeparator);
-    }
-
-    // This method converts Persian/Arabic numbers to English.
-    private static String persianToEnglish(String number) {
-        char[] chars = new char[number.length()];
-        for (int i = 0; i < number.length(); i++) {
-            char ch = number.charAt(i);
-            if (ch >= 0x0660 && ch <= 0x0669)
-                ch -= 0x0660 - '0';
-            else if (ch >= 0x06f0 && ch <= 0x06F9)
-                ch -= 0x06f0 - '0';
-            chars[i] = ch;
-        }
-        return new String(chars);
-    }
-
-    // This method converts Gregorian date to Jalali.
-    private int[] gregorianToJalali(int gy, int gm, int gd) {
-        int[] out = {(gm > 2) ? (gy + 1) : gy, 0, 0};
-        {
-            int[] g_d_m = {0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334};
-            out[2] = 355666 + (365 * gy) + ((out[0] + 3) / 4) - ((out[0] + 99) / 100) + ((out[0] + 399) / 400) + gd + g_d_m[gm - 1];
-        }
-        out[0] = -1595 + (33 * (out[2] / 12053));
-        out[2] %= 12053;
-        out[0] += 4 * (out[2] / 1461);
-        out[2] %= 1461;
-        if (out[2] > 365) {
-            out[0] += (out[2] - 1) / 365;
-            out[2] = (out[2] - 1) % 365;
-        }
-        if (out[2] < 186) {
-            out[1] = 1 + (out[2] / 31);
-            out[2] = 1 + (out[2] % 31);
-        } else {
-            out[1] = 7 + ((out[2] - 186) / 30);
-            out[2] = 1 + ((out[2] - 186) % 30);
-        }
-        return out;
+        public void keyTyped(KeyEvent e) {}
     }
 }
