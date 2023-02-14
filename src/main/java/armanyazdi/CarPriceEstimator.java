@@ -27,8 +27,8 @@ import java.util.Objects;
 public class CarPriceEstimator extends JFrame implements ActionListener {
     private String[] model, color;
     private String gearbox, production, mileage, status;
-    private JLabel labelBuildToLetters, labelMileageToLetters;
-    private JTextField textFieldBuild, textFieldMileage;
+    private JLabel labelProductionToLetters, labelMileageToLetters;
+    private JTextField textFieldProduction, textFieldMileage;
     private JComboBox<String> comboBoxModel, comboBoxGearbox, comboBoxColor, comboBoxStatus;
     private Font textFont, infoFont, priceFont;
     private long roundedFirstPrice, roundedSecondPrice;
@@ -200,7 +200,12 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
                 "کوییک دنده ای",
                 "کوییک دنده ای R",
                 "کوییک دنده ای S",
-                "کوییک R پلاس اتوماتیک"
+                "کوییک R پلاس اتوماتیک",
+                "هایما S5 6 سرعته اتوماتیک",
+                "هایما S5 گیربکس CVT",
+                "هایما S7 2.0",
+                "هایما S7 1.8 توربو",
+                "هایما S7 1.8 توربو پلاس"
         };
 
         // Gearboxes List
@@ -291,18 +296,18 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
         labelGearbox.setFont(titleFont);
         panel.add(labelGearbox);
 
-        JLabel labelBuild = new JLabel("سال تولید", SwingConstants.RIGHT);
-        labelBuild.setBounds(350, 185, 150, 40);
-        labelBuild.setForeground(new Color(48, 46, 73));
-        labelBuild.setFont(titleFont);
-        panel.add(labelBuild);
+        JLabel labelProduction = new JLabel("سال تولید", SwingConstants.RIGHT);
+        labelProduction.setBounds(350, 185, 150, 40);
+        labelProduction.setForeground(new Color(48, 46, 73));
+        labelProduction.setFont(titleFont);
+        panel.add(labelProduction);
 
-        labelBuildToLetters = new JLabel();
-        labelBuildToLetters.setHorizontalAlignment(SwingConstants.RIGHT);
-        labelBuildToLetters.setBounds(45, 222, 275, 40);
-        labelBuildToLetters.setForeground(new Color(91, 64, 124));
-        labelBuildToLetters.setFont(lettersFont);
-        panel.add(labelBuildToLetters);
+        labelProductionToLetters = new JLabel();
+        labelProductionToLetters.setHorizontalAlignment(SwingConstants.RIGHT);
+        labelProductionToLetters.setBounds(45, 222, 275, 40);
+        labelProductionToLetters.setForeground(new Color(91, 64, 124));
+        labelProductionToLetters.setFont(lettersFont);
+        panel.add(labelProductionToLetters);
 
         JLabel labelMileage = new JLabel("کارکرد (km)", SwingConstants.RIGHT);
         labelMileage.setBounds(350, 260, 150, 40);
@@ -355,11 +360,11 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
         panel.add(comboBoxStatus);
 
         // Text Fields
-        textFieldBuild = new JTextField(4);
-        textFieldBuild.setBounds(50, 185, 275, 40);
-        textFieldBuild.setFont(textFont);
-        textFieldBuild.addKeyListener(new textChangedListener());
-        panel.add(textFieldBuild);
+        textFieldProduction = new JTextField(4);
+        textFieldProduction.setBounds(50, 185, 275, 40);
+        textFieldProduction.setFont(textFont);
+        textFieldProduction.addKeyListener(new textChangedListener());
+        panel.add(textFieldProduction);
 
         textFieldMileage = new JTextField();
         textFieldMileage.setBounds(50, 260, 275, 40);
@@ -738,6 +743,11 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
             case "کوییک دنده ای R" -> model = new String[]{"quick-manualr", "quick/manual/r"};
             case "کوییک دنده ای S" -> model = new String[]{"quick-manuals", "quick/manual/s"};
             case "کوییک R پلاس اتوماتیک" -> model = new String[]{"quick-manualrplus-at", "quick/automatic/p-plus"};
+            case "هایما S5 6 سرعته اتوماتیک" -> model = new String[]{"haima-s5-6at", "haima/s5/6-at"};
+            case "هایما S5 گیربکس CVT" -> model = new String[]{"haima-s5-cvt", "haima/s5/at-cvt"};
+            case "هایما S7 2.0" -> model = new String[]{"haima-s7-2.0l", "haima/s7/automatic-2000cc"};
+            case "هایما S7 1.8 توربو" -> model = new String[]{"haima-s7-1.8lturbo", "haima/s7/automatic-turbo-1800cc"};
+            case "هایما S7 1.8 توربو پلاس" -> model = new String[]{"haima-s7-1.8lturboplus", "haima/s7-plus"};
         }
 
         // Colors
@@ -815,7 +825,7 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
             case 2 -> gearbox = "manual";
         }
 
-        production = persianToEnglish(textFieldBuild.getText().trim());
+        production = persianToEnglish(textFieldProduction.getText().trim());
         mileage = persianToEnglish(textFieldMileage.getText().trim());
 
         estimatePrice();
@@ -837,10 +847,10 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
         public void keyPressed(KeyEvent e){}
         public void keyReleased(KeyEvent e) {
 
-            if (!Objects.equals(textFieldBuild.getText(), "")) {
-                String textProduction = NumberUtils.numberToWords(Integer.parseInt(textFieldBuild.getText()));
+            if (!Objects.equals(textFieldProduction.getText(), "")) {
+                String textProduction = NumberUtils.numberToWords(Integer.parseInt(textFieldProduction.getText()));
                 if (textProduction.contains("یک هزار و")) textProduction = textProduction.replace("یک هزار و", "هزار و");
-                labelBuildToLetters.setText(textProduction);
+                labelProductionToLetters.setText(textProduction);
             }
 
             if (!Objects.equals(textFieldMileage.getText(), "")) {
