@@ -21,6 +21,7 @@ import java.text.NumberFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Objects;
 
 
@@ -305,7 +306,7 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
         labelProductionToLetters = new JLabel();
         labelProductionToLetters.setHorizontalAlignment(SwingConstants.RIGHT);
         labelProductionToLetters.setBounds(45, 222, 275, 40);
-        labelProductionToLetters.setForeground(new Color(91, 64, 124));
+        labelProductionToLetters.setForeground(new Color(48, 46, 73));
         labelProductionToLetters.setFont(lettersFont);
         panel.add(labelProductionToLetters);
 
@@ -318,7 +319,7 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
         labelMileageToLetters = new JLabel();
         labelMileageToLetters.setHorizontalAlignment(SwingConstants.RIGHT);
         labelMileageToLetters.setBounds(45, 297, 275, 40);
-        labelMileageToLetters.setForeground(new Color(91, 64, 124));
+        labelMileageToLetters.setForeground(new Color(48, 46, 73));
         labelMileageToLetters.setFont(lettersFont);
         panel.add(labelMileageToLetters);
 
@@ -374,7 +375,7 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
 
         // Button
         JButton estimateButton = new JButton("محاسبه قیمت");
-        estimateButton.setBounds(145, 495, 250, 80);
+        estimateButton.setBounds(145, 485, 250, 90);
         estimateButton.setForeground(new Color(255, 86, 119));
         estimateButton.setFont(titleFont);
         estimateButton.addActionListener(this);
@@ -388,7 +389,7 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
         long sumDivar = 0;
 
         // Loading
-        System.out.println("Estimating Price ...");
+        System.out.println("در حال محاسبه قیمت ...");
 
         // URL
         String linkBama = "https://bama.ir/car/%s-y%s?mileage=%s&priced=1&seller=1&transmission=%s&color=%s&status=%s&sort=7"
@@ -465,7 +466,7 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
         roundedSecondPrice = (secondPrice + 500000) / 1000000 * 1000000;
 
         // Done
-        System.out.println("Done!");
+        System.out.println("انجام شد!");
     }
 
     private void showPrice(JPanel panelPrice) {
@@ -476,6 +477,20 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
         int gregorianDay = Integer.parseInt(DateTimeFormatter.ofPattern("dd").format(localDate));
         int[] gDate = gregorianToJalali(gregorianYear, gregorianMonth, gregorianDay);
         String jalaliDate = "%s/%s/%s".formatted(gDate[0], gDate[1], gDate[2]);
+
+        // Day Name of Week.
+        String[] daysList = new String[] {
+                "یکشنبه",
+                "دوشنبه",
+                "سه شنبه",
+                "چهارشنبه",
+                "پنجشنبه",
+                "جمعه",
+                "شنبه"
+        };
+
+        Calendar calendar = Calendar.getInstance();
+        String dayName = daysList[calendar.get(Calendar.DAY_OF_WEEK) - 1];
 
         // Labels
         JLabel labelCar = new JLabel("%s، %s، مدل %s".formatted(
@@ -499,13 +514,13 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
 
         JLabel labelPrice = new JLabel("%s تا %s تومان".formatted(format.format(roundedFirstPrice), format.format(roundedSecondPrice)), SwingConstants.CENTER);
         labelPrice.setBounds(0, 390, 550, 40);
-        labelPrice.setForeground(new Color(48, 46, 73));
+        labelPrice.setForeground(new Color(84, 116, 248));
         labelPrice.setFont(priceFont);
         panelPrice.add(labelPrice);
 
-        JLabel labelDate = new JLabel("قیمت اعلام شده در تاریخ %s معتبر است.".formatted(jalaliDate), SwingConstants.CENTER);
+        JLabel labelDate = new JLabel("تاریخ: %s %s".formatted(dayName, jalaliDate), SwingConstants.CENTER);
         labelDate.setBounds(0, 535, 550, 40);
-        labelDate.setForeground(new Color(255, 86, 119));
+        labelDate.setForeground(new Color(48, 46, 73));
         labelDate.setFont(infoFont);
         panelPrice.add(labelDate);
 
