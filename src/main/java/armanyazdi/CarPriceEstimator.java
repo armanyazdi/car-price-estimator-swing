@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Objects;
 
-
 public class CarPriceEstimator extends JFrame implements ActionListener {
     private String[] model, color;
     private String gearbox, production, mileage, status;
@@ -478,19 +477,10 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
         int[] gDate = gregorianToJalali(gregorianYear, gregorianMonth, gregorianDay);
         String jalaliDate = "%s/%s/%s".formatted(gDate[0], gDate[1], gDate[2]);
 
-        // Day Name of Week.
-        String[] daysList = new String[] {
-                "یکشنبه",
-                "دوشنبه",
-                "سه شنبه",
-                "چهارشنبه",
-                "پنجشنبه",
-                "جمعه",
-                "شنبه"
-        };
-
+        // Day Name of Week
         Calendar calendar = Calendar.getInstance();
-        String dayName = daysList[calendar.get(Calendar.DAY_OF_WEEK) - 1];
+        String[] weekDays = new String[] {"یکشنبه", "دوشنبه", "سه شنبه", "چهارشنبه", "پنجشنبه", "جمعه", "شنبه"};
+        String dayName = weekDays[calendar.get(Calendar.DAY_OF_WEEK) - 1];
 
         // Labels
         JLabel labelCar = new JLabel("%s، %s، مدل %s".formatted(
@@ -859,7 +849,7 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
     }
 
     private class textChangedListener implements KeyListener {
-        public void keyPressed(KeyEvent e){}
+        public void keyPressed(KeyEvent e) {}
         public void keyReleased(KeyEvent e) {
 
             if (!Objects.equals(textFieldProduction.getText(), "")) {
