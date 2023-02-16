@@ -459,8 +459,8 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
         // Price Estimator
         // averagePrice = ((sumBama / bamaPricesList.size()) + (sumDivar / divarPricesList.size())) / 2;
         long averagePrice = sumBama / bamaPricesList.size();
-        long firstPrice = (int) (averagePrice - averagePrice * 0.01);
-        long secondPrice = (int) (averagePrice + averagePrice * 0.01);
+        long firstPrice = (long) (averagePrice - averagePrice * 0.01);
+        long secondPrice = (long) (averagePrice + averagePrice * 0.01);
         roundedFirstPrice = (firstPrice + 500000) / 1000000 * 1000000;
         roundedSecondPrice = (secondPrice + 500000) / 1000000 * 1000000;
 
@@ -471,9 +471,9 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
     private void showPrice(JPanel panelPrice) {
         // Gregorian to Jalali date converter.
         LocalDate localDate = LocalDate.now();
-        int gregorianYear = Integer.parseInt(DateTimeFormatter.ofPattern("yyyy").format(localDate));
-        int gregorianMonth = Integer.parseInt(DateTimeFormatter.ofPattern("MM").format(localDate));
-        int gregorianDay = Integer.parseInt(DateTimeFormatter.ofPattern("dd").format(localDate));
+        short gregorianYear = Short.parseShort(DateTimeFormatter.ofPattern("yyyy").format(localDate));
+        byte gregorianMonth = Byte.parseByte(DateTimeFormatter.ofPattern("MM").format(localDate));
+        byte gregorianDay = Byte.parseByte(DateTimeFormatter.ofPattern("dd").format(localDate));
         int[] gDate = gregorianToJalali(gregorianYear, gregorianMonth, gregorianDay);
         String jalaliDate = "%s/%s/%s".formatted(gDate[0], gDate[1], gDate[2]);
 
@@ -590,7 +590,7 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
     }
 
     // This method converts Gregorian date to Jalali.
-    private int[] gregorianToJalali(int gy, int gm, int gd) {
+    private static int[] gregorianToJalali(short gy, byte gm, byte gd) {
         int[] out = {(gm > 2) ? (gy + 1) : gy, 0, 0};
         {
             int[] g_d_m = {0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334};
@@ -853,7 +853,7 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
         public void keyReleased(KeyEvent e) {
 
             if (!Objects.equals(textFieldProduction.getText(), "")) {
-                String textProduction = NumberUtils.numberToWords(Integer.parseInt(textFieldProduction.getText()));
+                String textProduction = NumberUtils.numberToWords(Short.parseShort(textFieldProduction.getText()));
                 if (textProduction.contains("یک هزار و")) textProduction = textProduction.replace("یک هزار و", "هزار و");
                 labelProductionToLetters.setText(textProduction);
             }
