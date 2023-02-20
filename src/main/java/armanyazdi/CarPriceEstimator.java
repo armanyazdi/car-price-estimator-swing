@@ -35,9 +35,6 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
     private final NumberFormat format = NumberFormat.getNumberInstance();
 
     public void mainFrame() throws IOException, FontFormatException {
-        // GitHub Repository:
-        System.out.println("https://github.com/armanyazdi/car-price-estimator-java");
-
         JFrame frame = new JFrame("محاسبه قیمت خودرو کارکرده");
         frame.setSize(550, 640);
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
