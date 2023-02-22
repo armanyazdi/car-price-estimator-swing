@@ -1,5 +1,5 @@
 /* GitHub Repository:
-https://github.com/armanyazdi/car-price-estimator-java */
+https://github.com/armanyazdi/car-price-estimator */
 
 package armanyazdi;
 
