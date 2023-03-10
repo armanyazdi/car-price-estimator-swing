@@ -11,9 +11,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -53,8 +51,8 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
 
         // Fonts
         File fileKalamehRegular = new File("src/main/resources/fonts/KalamehFaNum-Regular.ttf");
-        Font fontKalamehRegular = Font.createFont(Font.TRUETYPE_FONT, fileKalamehRegular);
         File fileKalamehMedium = new File("src/main/resources/fonts/KalamehFaNum-Medium.ttf");
+        Font fontKalamehRegular = Font.createFont(Font.TRUETYPE_FONT, fileKalamehRegular);
         Font fontKalamehMedium = Font.createFont(Font.TRUETYPE_FONT, fileKalamehMedium);
 
         Font titleFont = fontKalamehMedium.deriveFont(28f);
@@ -65,222 +63,32 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
 
         // Lists
         String pleaseChoose = "----- انتخاب کنید -----";
+        String line;
 
-        // Cars List
-        String[] modelsList = {
-                pleaseChoose,
+        ArrayList<String> modelsList = new ArrayList<>();
+        ArrayList<String> colorsList = new ArrayList<>();
+        ArrayList<String> statusList = new ArrayList<>();
 
-                "پراید 111 EX",
-                "پراید 111 LX",
-                "پراید 111 SE",
-                "پراید 111 SL",
-                "پراید 111 SX",
-                "پراید 131 EX",
-                "پراید 131 LE",
-                "پراید 131 SE",
-                "پراید 131 SL",
-                "پراید 131 SX",
-                "پراید 131 TL",
-                "پراید 132 ساده",
-                "پراید 132 EX",
-                "پراید 132 LE",
-                "پراید 132 SE",
-                "پراید 132 SL",
-                "پراید 132 SX",
-                "پراید 141 ساده",
-                "پراید 141 SE",
-                "پراید 141 SL",
-                "پراید 141 SX",
-                "پراید 151 پلاس",
-                "پراید 151 SE",
-                "پراید 151 SL",
-                "پراید صندوق دار",
-                "پراید هاچ بک",
-                "پژو 206 تیپ 1",
-                "پژو 206 تیپ 2",
-                "پژو 206 تیپ 3",
-                "پژو 206 تیپ 3 پانوراما",
-                "پژو 206 تیپ 4",
-                "پژو 206 تیپ 5",
-                "پژو 206 تیپ 6",
-                "پژو 206 صندوقدار V1",
-                "پژو 206 صندوقدار V10",
-                "پژو 206 صندوقدار V2",
-                "پژو 206 صندوقدار V20",
-                "پژو 206 صندوقدار V6",
-                "پژو 206 صندوقدار V8",
-                "پژو 206 صندوقدار V9",
-                "پژو 207 اتوماتیک TU5",
-                "پژو 207 اتوماتیک TU5P",
-                "پژو 207 پانوراما اتوماتیک TU5",
-                "پژو 207 پانوراما اتوماتیک TU5P",
-                "پژو 207 پانوراما دنده ای",
-                "پژو 207 دنده ای",
-                "پژو 207 MC اتوماتیک",
-                "پژو 207 صندوقدار اتوماتیک",
-                "پژو 207 صندوقدار دنده ای",
-                "پژو 405 GL",
-                "پژو 405 GLI",
-                "پژو 405 GLX بنزینی",
-                "پژو 405 GLX دوگانه سوز",
-                "پژو 405 SLX",
-                "پژو 2008",
-                "پژو پارس اتوماتیک",
-                "پژو پارس دوگانه سوز",
-                "پژو پارس ELX-TU5",
-                "پژو پارس ELX-XU7",
-                "پژو پارس ELX-XU7P",
-                "پژو پارس ELX-XUM",
-                "پژو پارس LX",
-                "پژو پارس XU7",
-                "پژو پارس XU7P",
-                "پژو روآ",
-                "پژو RD",
-                "پژو RDI",
-                "تیبا صندوقدار پلاس",
-                "تیبا صندوقدار EX",
-                "تیبا صندوقدار SL",
-                "تیبا صندوقدار SX بنزینی",
-                "تیبا صندوقدار SX دوگانه سوز",
-                "تیبا هاچ بک پلاس",
-                "تیبا هاچ بک EX",
-                "تیبا هاچ بک SX",
-                "جک S3 اتوماتیک",
-                "جک S5 اتوماتیک",
-                "جک S5 دنده ای",
-                "جک S5 نیوفیس",
-                "جک جی 3 سدان",
-                "جک جی 3 هاچ بک",
-                "جک جی 4",
-                "جک جی 5 اتوماتیک",
-                "جک جی 5 دنده ای",
-                "دانگ فنگ H30 کراس",
-                "دنا معمولی",
-                "دنا پلاس 5 دنده توربو",
-                "دنا پلاس 6 دنده توربو",
-                "دنا پلاس اتوماتیک توربو",
-                "دنا پلاس دنده ای ساده",
-                "رانا پلاس",
-                "رانا پلاس پانوراما",
-                "رانا EL",
-                "رانا LX",
-                "تارا اتوماتیک",
-                "تارا دنده ای",
-                "رنو پارس تندر",
-                "رنو تندر 90 اتوماتیک",
-                "رنو تندر 90 پلاس اتوماتیک",
-                "رنو تندر 90 پلاس دنده ای",
-                "رنو تندر 90 E0",
-                "رنو تندر 90 E1",
-                "رنو تندر 90 E2",
-                "رنو ساندرو اتوماتیک",
-                "رنو ساندرو دنده ای",
-                "رنو ساندرو استپ وی اتوماتیک",
-                "رنو ساندرو استپ وی دنده ای",
-                "ساینا اتوماتیک",
-                "ساینا پلاس دنده ای",
-                "ساینا EX دنده ای",
-                "ساینا S دنده ای",
-                "سمند سورن پلاس بنزینی",
-                "سمند سورن ساده",
-                "سمند سورن ELX",
-                "سمند سورن ELX توربو",
-                "سمند EL",
-                "سمند LX EF7",
-                "سمند LX EF7 دوگانه سوز",
-                "سمند LX XU7",
-                "سمند SE",
-                "سمند X7",
-                "سیتروئن زانتیا 1.8",
-                "سیتروئن زانتیا 2.0 SX",
-                "شاهین G",
-                "کوییک اتوماتیک",
-                "کوییک اتوماتیک پلاس",
-                "کوییک دنده ای",
-                "کوییک دنده ای R",
-                "کوییک دنده ای S",
-                "کوییک R پلاس اتوماتیک",
-                "هایما S5 6 سرعته اتوماتیک",
-                "هایما S5 گیربکس CVT",
-                "هایما S7 2.0",
-                "هایما S7 1.8 توربو",
-                "هایما S7 1.8 توربو پلاس"
-        };
+        // Add Models from the file to the list
+        modelsList.add(pleaseChoose);
+        BufferedReader readerModels = new BufferedReader(new FileReader("src/main/resources/data/models.txt"));
+        while ((line = readerModels.readLine()) != null) modelsList.add(line);
+        readerModels.close();
+
+        // Add Colors from the file to the list
+        colorsList.add(pleaseChoose);
+        BufferedReader readerColors = new BufferedReader(new FileReader("src/main/resources/data/colors.txt"));
+        while ((line = readerColors.readLine()) != null) colorsList.add(line);
+        readerColors.close();
+
+        // Add Statuses from the file to the list
+        statusList.add(pleaseChoose);
+        BufferedReader readerStatus = new BufferedReader(new FileReader("src/main/resources/data/status.txt"));
+        while ((line = readerStatus.readLine()) != null) statusList.add(line);
+        readerStatus.close();
 
         // Gearboxes List
         String[] gearboxList = {pleaseChoose, "اتوماتیک", "دنده ای"};
-
-        // Colors List
-        String[] colorsList = {
-                pleaseChoose,
-
-                "سفید",
-                "مشکی",
-                "خاکستری",
-                "نقره ای",
-                "سفید صدفی",
-                "نوک مدادی",
-                "آبی",
-                "قهوه ای",
-                "قرمز",
-                "سرمه ای",
-                "بژ",
-                "تیتانیوم",
-                "سربی",
-                "سبز",
-                "کربن بلک",
-                "آلبالویی",
-                "نقرآبی",
-                "دلفینی",
-                "زرد",
-                "مسی",
-                "یشمی",
-                "بادمجانی",
-                "نارنجی",
-                "ذغالی",
-                "طوسی",
-                "زیتونی",
-                "کرم",
-                "گیلاسی",
-                "طلایی",
-                "زرشکی",
-                "اطلسی",
-                "برنز",
-                "عنابی",
-                "خاکی",
-                "موکا",
-                "بنفش",
-                "پوست پیازی",
-                "یاسی",
-                "اخرائی",
-                "صورتی",
-                "شتری",
-                "مارون"
-        };
-
-        // Statuses List
-        String[] statusList = {
-                pleaseChoose,
-
-                "بدون رنگ",
-                "یک لکه رنگ",
-                "دو لکه رنگ",
-                "چند لکه رنگ",
-                "صافکاری بدون رنگ",
-                "دور رنگ",
-                "گلگیر رنگ",
-                "کاپوت رنگ",
-                "یک درب رنگ",
-                "دو درب رنگ",
-                "کامل رنگ",
-                "کاپوت تعویض",
-                "گلگیر تعویض",
-                "درب تعویض",
-                "اتاق تعویض",
-                "تصادفی",
-                "سوخته",
-                "اوراقی"
-        };
 
         // Labels
         JLabel labelModel = new JLabel("مدل خودرو", SwingConstants.RIGHT);
@@ -334,7 +142,8 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
         panel.add(labelStatus);
 
         // Combo Boxes
-        comboBoxModel = new JComboBox<>(modelsList);
+        comboBoxModel = new JComboBox<>();
+        comboBoxModel.setModel(new DefaultComboBoxModel<>(modelsList.toArray(new String[0])));
         comboBoxModel.setBounds(50, 35, 275, 40);
         ((JLabel) comboBoxModel.getRenderer()).setHorizontalAlignment(JLabel.RIGHT);
         comboBoxModel.setFont(textFont);
@@ -346,13 +155,15 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
         comboBoxGearbox.setFont(textFont);
         panel.add(comboBoxGearbox);
 
-        comboBoxColor = new JComboBox<>(colorsList);
+        comboBoxColor = new JComboBox<>();
+        comboBoxColor.setModel(new DefaultComboBoxModel<>(colorsList.toArray(new String[0])));
         comboBoxColor.setBounds(50, 335, 275, 40);
         ((JLabel) comboBoxColor.getRenderer()).setHorizontalAlignment(JLabel.RIGHT);
         comboBoxColor.setFont(textFont);
         panel.add(comboBoxColor);
 
-        comboBoxStatus = new JComboBox<>(statusList);
+        comboBoxStatus = new JComboBox<>();
+        comboBoxStatus.setModel(new DefaultComboBoxModel<>(statusList.toArray(new String[0])));
         comboBoxStatus.setBounds(50, 410, 275, 40);
         ((JLabel) comboBoxStatus.getRenderer()).setHorizontalAlignment(JLabel.RIGHT);
         comboBoxStatus.setFont(textFont);
@@ -387,7 +198,7 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
         long sumDivar = 0;
 
         // Loading
-        System.out.println("در حال محاسبه قیمت ...");
+        System.out.println("Estimating Price...");
 
         // URL
         String linkBama = "https://bama.ir/car/%s-y%s?mileage=%s&priced=1&seller=1&transmission=%s&color=%s&status=%s&sort=7"
@@ -464,7 +275,7 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
         roundedSecondPrice = (secondPrice + 500000) / 1000000 * 1000000;
 
         // Done
-        System.out.println("انجام شد!");
+        System.out.println("Done!");
     }
 
     private void showPrice(JPanel panelPrice) {
@@ -538,13 +349,13 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
         panelPrice.add(labelUp);
 
         JLabel labelFirstPrice = new JLabel("%s تومان".formatted(format.format(roundedFirstPrice)), SwingConstants.CENTER);
-        labelFirstPrice.setBounds(0, 235, 275, 40);
+        labelFirstPrice.setBounds(0, 235, 300, 40);
         labelFirstPrice.setForeground(new Color(48, 46, 73));
         labelFirstPrice.setFont(textFont);
         panelPrice.add(labelFirstPrice);
 
         JLabel labelSecondPrice = new JLabel("%s تومان".formatted(format.format(roundedSecondPrice)), SwingConstants.CENTER);
-        labelSecondPrice.setBounds(275, 235, 275, 40);
+        labelSecondPrice.setBounds(275, 235, 250, 40);
         labelSecondPrice.setForeground(new Color(48, 46, 73));
         labelSecondPrice.setFont(textFont);
         panelPrice.add(labelSecondPrice);
@@ -553,13 +364,13 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
         JLabel minimumLine = new JLabel("", JLabel.CENTER);
         minimumLine.setBounds(150, 280, 3, 25);
         minimumLine.setOpaque(true);
-        minimumLine.setBackground(new Color(104, 109, 120));
+        minimumLine.setBackground(new Color(67, 69, 75));
         panelPrice.add(minimumLine);
 
         JLabel maximumLine = new JLabel("", JLabel.CENTER);
         maximumLine.setBounds(397, 280, 3, 25);
         maximumLine.setOpaque(true);
-        maximumLine.setBackground(new Color(104, 109, 120));
+        maximumLine.setBackground(new Color(67, 69, 75));
         panelPrice.add(maximumLine);
 
         // Separators
@@ -606,7 +417,8 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
         if (out[2] < 186) {
             out[1] = 1 + (out[2] / 31);
             out[2] = 1 + (out[2] % 31);
-        } else {
+        }
+        else {
             out[1] = 7 + ((out[2] - 186) / 30);
             out[2] = 1 + ((out[2] - 186) % 30);
         }
