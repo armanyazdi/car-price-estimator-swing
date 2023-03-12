@@ -34,6 +34,18 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
     private long roundedFirstPrice, roundedSecondPrice;
     private final NumberFormat format = NumberFormat.getNumberInstance();
 
+    private void fileReader(String file, ArrayList<String> list) {
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader("src/main/resources/data/".concat(file)));
+            String line;
+            while ((line = reader.readLine()) != null) list.add(line);
+            reader.close();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void mainFrame() throws IOException, FontFormatException {
         JFrame frame = new JFrame("محاسبه قیمت خودرو کارکرده");
         frame.setSize(550, 640);
@@ -63,29 +75,21 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
 
         // Lists
         String pleaseChoose = "----- انتخاب کنید -----";
-        String line;
-
         ArrayList<String> modelsList = new ArrayList<>();
         ArrayList<String> colorsList = new ArrayList<>();
         ArrayList<String> statusList = new ArrayList<>();
 
         // Add Models from the file to the list
         modelsList.add(pleaseChoose);
-        BufferedReader readerModels = new BufferedReader(new FileReader("src/main/resources/data/models.txt"));
-        while ((line = readerModels.readLine()) != null) modelsList.add(line);
-        readerModels.close();
+        fileReader("models.txt", modelsList);
 
         // Add Colors from the file to the list
         colorsList.add(pleaseChoose);
-        BufferedReader readerColors = new BufferedReader(new FileReader("src/main/resources/data/colors.txt"));
-        while ((line = readerColors.readLine()) != null) colorsList.add(line);
-        readerColors.close();
+        fileReader("colors.txt", colorsList);
 
         // Add Statuses from the file to the list
         statusList.add(pleaseChoose);
-        BufferedReader readerStatus = new BufferedReader(new FileReader("src/main/resources/data/status.txt"));
-        while ((line = readerStatus.readLine()) != null) statusList.add(line);
-        readerStatus.close();
+        fileReader("status.txt", statusList);
 
         // Gearboxes List
         String[] gearboxList = {pleaseChoose, "اتوماتیک", "دنده ای"};
@@ -182,7 +186,7 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
         textFieldMileage.addKeyListener(new textChangedListener());
         panel.add(textFieldMileage);
 
-        // Button
+        // Buttons
         JButton estimateButton = new JButton("محاسبه قیمت");
         estimateButton.setBounds(145, 485, 250, 90);
         estimateButton.setForeground(new Color(255, 86, 119));
@@ -220,19 +224,18 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
 
                 try {
                     InputStream responseStream = connection.getInputStream();
-
                     Document bama = Jsoup.parse(responseStream, "UTF-8", linkBama);
                     Elements bamaPrices = bama.getElementsByClass("bama-ad__price");
 
                     for (Element price : bamaPrices) bamaPricesList.add(price.text().replace(",", ""));
                     for (String price : bamaPricesList) sumBama += Long.parseLong(price);
-
-                } catch (IOException e0) {
-                    e0.printStackTrace();
                 }
-
-            } catch (IOException e1) {
-                e1.printStackTrace();
+                catch (IOException e1) {
+                    e1.printStackTrace();
+                }
+            }
+            catch (IOException e2) {
+                e2.printStackTrace();
             }
 
             // Divar
@@ -242,28 +245,25 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
 
                 try {
                     InputStream responseStream = connection.getInputStream();
-
                     Document divar = Jsoup.parse(responseStream, "UTF-8", linkDivar);
                     Elements divarPrices = divar.getElementsByClass("kt-post-card__description");
 
-                    for (Element price : divarPrices) {
-                        if (price.toString().contains("تومان")) {
+                    for (Element price : divarPrices)
+                        if (price.toString().contains("تومان"))
                             divarPricesList.add(persianToEnglish(price.text().replaceAll("[, تومان]", "")));
-                        }
-                    }
 
                     for (String price : divarPricesList) sumDivar += Long.parseLong(price);
-
-                } catch (IOException e0) {
-                    e0.printStackTrace();
                 }
-
-            } catch (IOException e1) {
-                e1.printStackTrace();
+                catch (IOException e1) {
+                    e1.printStackTrace();
+                }
             }
-
-        } catch (MalformedURLException e1) {
-            e1.printStackTrace();
+            catch (IOException e2) {
+                e2.printStackTrace();
+            }
+        }
+        catch (MalformedURLException e) {
+            e.printStackTrace();
         }
 
         // Price Estimator
