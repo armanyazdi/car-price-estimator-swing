@@ -1,7 +1,7 @@
 /* GitHub Repository:
 https://github.com/armanyazdi/car-price-estimator-swing */
 
-package armanyazdi;
+package com.armanyazdi;
 
 import java.awt.*;
 import java.io.IOException;
