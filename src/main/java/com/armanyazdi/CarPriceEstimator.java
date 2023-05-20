@@ -1,5 +1,6 @@
 package com.armanyazdi;
 
+import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -198,77 +199,64 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
     private void estimatePrice() {
         ArrayList<String> bamaPricesList = new ArrayList<>();
         ArrayList<String> divarPricesList = new ArrayList<>();
+        ArrayList<String> allPricesList = new ArrayList<>();
         long sumBama = 0;
         long sumDivar = 0;
+        long sumAll = 0;
+        long averagePrice;
 
         // Loading
         System.out.println("Estimating Price...");
 
         // URL
-        String linkBama = "https://bama.ir/car/%s-y%s?mileage=%s&priced=1&seller=1&transmission=%s&color=%s&status=%s&sort=7"
+        String urlBama = "https://bama.ir/car/%s-y%s?mileage=%s&priced=1&seller=1&transmission=%s&color=%s&status=%s&sort=7"
                 .formatted(model[0], production, mileage, gearbox, color[0], status);
-        String linkDivar = "https://divar.ir/s/tehran/car/%s?color=%s&production-year=%s-%s&usage=%s-%s&business-type=personal&exchange=exclude-exchanges"
+        String urlDivar = "https://divar.ir/s/tehran/car/%s?color=%s&production-year=%s-%s&usage=%s-%s&business-type=personal&exchange=exclude-exchanges"
                 .formatted(model[1], color[1], production, production, mileage, (int) (Integer.parseInt(mileage) * 1.5));
-        URL urlBama, urlDivar;
 
         // Data Scraper
+        System.setProperty("http.maxRedirects", "999");
+
+        // Bama
         try {
-            urlBama = new URL(linkBama);
-            urlDivar = new URL(linkDivar);
-            HttpURLConnection connection;
+            Connection.Response resBama = Jsoup.connect(urlBama).followRedirects(true).execute();
+            Document docBama = Jsoup.parse(resBama.body());
+            Elements bamaPrices = docBama.getElementsByClass("bama-ad__price");
 
-            // Bama
-            try {
-                connection = (HttpURLConnection) urlBama.openConnection();
-                connection.setRequestProperty("accept", "application/json");
-
-                try {
-                    InputStream responseStream = connection.getInputStream();
-                    Document bama = Jsoup.parse(responseStream, "UTF-8", linkBama);
-                    Elements bamaPrices = bama.getElementsByClass("bama-ad__price");
-
-                    for (Element price : bamaPrices) bamaPricesList.add(price.text().replace(",", ""));
-                    for (String price : bamaPricesList) sumBama += Long.parseLong(price);
-                }
-                catch (IOException e1) {
-                    e1.printStackTrace();
-                }
-            }
-            catch (IOException e2) {
-                e2.printStackTrace();
-            }
-
-            // Divar
-            try {
-                connection = (HttpURLConnection) urlDivar.openConnection();
-                connection.setRequestProperty("accept", "application/json");
-
-                try {
-                    InputStream responseStream = connection.getInputStream();
-                    Document divar = Jsoup.parse(responseStream, "UTF-8", linkDivar);
-                    Elements divarPrices = divar.getElementsByClass("kt-post-card__description");
-
-                    for (Element price : divarPrices)
-                        if (price.toString().contains("تومان"))
-                            divarPricesList.add(persianToEnglish(price.text().replaceAll("[, تومان]", "")));
-
-                    for (String price : divarPricesList) sumDivar += Long.parseLong(price);
-                }
-                catch (IOException e1) {
-                    e1.printStackTrace();
-                }
-            }
-            catch (IOException e2) {
-                e2.printStackTrace();
-            }
+            for (Element price : bamaPrices) bamaPricesList.add(price.text().replace(",", ""));
+            for (String price : bamaPricesList) sumBama += Long.parseLong(price);
         }
-        catch (MalformedURLException e) {
+        catch (IOException e) {
             e.printStackTrace();
         }
 
+        // Divar
+        try {
+            Connection.Response resDivar = Jsoup.connect(urlDivar).followRedirects(true).execute();
+            Document docDivar = Jsoup.parse(resDivar.body());
+            Elements divarPrices = docDivar.getElementsByClass("kt-post-card__description");
+
+            for (Element price : divarPrices)
+                if (price.toString().contains("تومان"))
+                    divarPricesList.add(persianToEnglish(price.text().replaceAll("[, تومان]", "")));
+
+            for (String price : divarPricesList) sumDivar += Long.parseLong(price);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // Merge Prices
+        allPricesList.addAll(bamaPricesList);
+        allPricesList.addAll(divarPricesList);
+        for (String price : allPricesList) sumAll += Long.parseLong(price);
+
         // Price Estimator
-        // averagePrice = ((sumBama / bamaPricesList.size()) + (sumDivar / divarPricesList.size())) / 2;
-        long averagePrice = sumBama / bamaPricesList.size();
+        if (allPricesList.size() != 0)
+            averagePrice = sumAll / allPricesList.size();
+        else
+            averagePrice = 0;
+
         long firstPrice = (long) (averagePrice - averagePrice * 0.01);
         long secondPrice = (long) (averagePrice + averagePrice * 0.01);
         roundedFirstPrice = (firstPrice + 500000) / 1000000 * 1000000;
