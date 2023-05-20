@@ -96,7 +96,7 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
         String[] gearboxList = {pleaseChoose, "اتوماتیک", "دنده ای"};
 
         // Labels
-        JLabel labelModel = new JLabel("مدل خودرو", SwingConstants.RIGHT);
+        JLabel labelModel = new JLabel("برند خودرو", SwingConstants.RIGHT);
         labelModel.setBounds(350, 35, 150, 40);
         labelModel.setForeground(new Color(48, 46, 73));
         labelModel.setFont(titleFont);
@@ -190,7 +190,7 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
         // Buttons
         JButton estimateButton = new JButton("محاسبه قیمت");
         estimateButton.setBounds(145, 485, 250, 90);
-        estimateButton.setForeground(new Color(255, 86, 119));
+        estimateButton.setForeground(new Color(255, 29, 79));
         estimateButton.setFont(titleFont);
         estimateButton.addActionListener(this);
         panel.add(estimateButton);
@@ -316,7 +316,7 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
         labelDown.setBounds(50, 305, 100, 40);
         labelDown.setOpaque(true);
         labelDown.setForeground(Color.WHITE);
-        labelDown.setBackground(new Color(60, 160, 86));
+        labelDown.setBackground(new Color(33, 48, 13));
         labelDown.setFont(textFont);
         panelPrice.add(labelDown);
 
@@ -324,7 +324,7 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
         labelFair.setBounds(150, 305, 250, 40);
         labelFair.setOpaque(true);
         labelFair.setForeground(Color.WHITE);
-        labelFair.setBackground(new Color(84, 219, 135));
+        labelFair.setBackground(new Color(174, 200, 129));
         labelFair.setFont(textFont);
         panelPrice.add(labelFair);
 
@@ -332,7 +332,7 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
         labelUp.setBounds(400, 305, 100, 40);
         labelUp.setOpaque(true);
         labelUp.setForeground(Color.WHITE);
-        labelUp.setBackground(new Color(255, 213, 88));
+        labelUp.setBackground(new Color(255, 29, 79));
         labelUp.setFont(textFont);
         panelPrice.add(labelUp);
 
@@ -596,7 +596,7 @@ public class CarPriceEstimator extends JFrame implements ActionListener {
             case "یاسی" -> color = new String[]{"lilac", URLEncoder.encode("بنفش", StandardCharsets.UTF_8)};
             case "اخرائی" -> color = new String[]{"ochre", URLEncoder.encode("نارنجی", StandardCharsets.UTF_8)};
             case "صورتی" -> color = new String[]{"pink", URLEncoder.encode("بنفش", StandardCharsets.UTF_8)};
-            case "شتری" -> color = new String[]{"camellike", URLEncoder.encode("خاکی", StandardCharsets.UTF_8)};
+            case "عدسی" -> color = new String[]{"lentil", URLEncoder.encode("عدسی", StandardCharsets.UTF_8)};
             case "مارون" -> color = new String[]{"maroon", URLEncoder.encode("آلبالویی", StandardCharsets.UTF_8)};
         }
 
